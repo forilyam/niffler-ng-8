@@ -2,10 +2,10 @@ package guru.qa.niffler.page;
 
 import com.codeborne.selenide.SelenideElement;
 
+import static com.codeborne.selenide.Condition.attribute;
 import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$x;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RegisterPage {
   private final SelenideElement usernameInput = $("input[name='username']");
@@ -59,18 +59,15 @@ public class RegisterPage {
   }
 
   public void checkThatUsernameIsFilled() {
-    String validationMessage = usernameInput.getAttribute("validationMessage");
-    assertEquals(VALIDATION_MESSAGE, validationMessage);
+    usernameInput.shouldHave(attribute("validationMessage", VALIDATION_MESSAGE));
   }
 
   public void checkThatPasswordIsFilled() {
-    String validationMessage = passwordInput.getAttribute("validationMessage");
-    assertEquals(VALIDATION_MESSAGE, validationMessage);
+    passwordInput.shouldHave(attribute("validationMessage", VALIDATION_MESSAGE));
   }
 
   public void checkThatPasswordSubmitIsFilled() {
-    String validationMessage = passwordSubmitInput.getAttribute("validationMessage");
-    assertEquals(VALIDATION_MESSAGE, validationMessage);
+    passwordSubmitInput.shouldHave(attribute("validationMessage", VALIDATION_MESSAGE));
   }
 
   public void checkThatUsernameIsAlreadyExist(String username) {

@@ -2,9 +2,9 @@ package guru.qa.niffler.page;
 
 import com.codeborne.selenide.SelenideElement;
 
+import static com.codeborne.selenide.Condition.attribute;
 import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Selenide.$;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class LoginPage {
   private final String VALIDATION_MESSAGE = "Заполните это поле.";
@@ -44,13 +44,12 @@ public class LoginPage {
   }
 
   public void checkThatUsernameIsFilled() {
-    String validationMessage = usernameInput.getAttribute("validationMessage");
-    assertEquals(VALIDATION_MESSAGE, validationMessage);
+    usernameInput.shouldHave(attribute("validationMessage", VALIDATION_MESSAGE));
   }
 
   public void checkThatPasswordIsFilled() {
-    String validationMessage = passwordInput.getAttribute("validationMessage");
-    assertEquals(VALIDATION_MESSAGE, validationMessage);
+    passwordInput.shouldHave(attribute("validationMessage", VALIDATION_MESSAGE));
+
   }
 
   public void checkThatUserIsNotCorrect() {
