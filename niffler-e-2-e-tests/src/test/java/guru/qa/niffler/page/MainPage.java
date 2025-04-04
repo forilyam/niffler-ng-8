@@ -14,6 +14,7 @@ public class MainPage {
   private final SelenideElement spendings = $("#spendings");
   private final SelenideElement profileBtn = $x("//*[@data-testid='PersonIcon']");
   private final SelenideElement profileLink = $("a[href='/profile']");
+  private final SelenideElement friendsLink = $("a[href='/people/friends']");
 
 
   public EditSpendingPage editSpending(String spendingDescription) {
@@ -38,5 +39,11 @@ public class MainPage {
     profileBtn.click();
     profileLink.click();
     return new ProfilePage();
+  }
+
+  public FriendsPage goToFriends() {
+    profileBtn.click();
+    friendsLink.click();
+    return new FriendsPage();
   }
 }
