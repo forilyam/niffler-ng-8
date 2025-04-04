@@ -15,7 +15,6 @@ public class CategoryExtension implements BeforeEachCallback, AfterTestExecution
 
   public static final ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create(CategoryExtension.class);
   private final SpendApiClient spendApiClient = new SpendApiClient();
-  private CategoryJson created;
 
   @Override
   public void beforeEach(ExtensionContext context) {
@@ -29,7 +28,7 @@ public class CategoryExtension implements BeforeEachCallback, AfterTestExecution
                 userAnno.categories()[0].archived()
             );
 
-            created = spendApiClient.createCategory(category);
+            CategoryJson created = spendApiClient.createCategory(category);
             if (userAnno.categories()[0].archived()) {
               CategoryJson archivedCategory = new CategoryJson(
                   created.id(),
