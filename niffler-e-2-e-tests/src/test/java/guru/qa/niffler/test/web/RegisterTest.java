@@ -1,24 +1,24 @@
 package guru.qa.niffler.test.web;
 
 import com.codeborne.selenide.Selenide;
-import com.github.javafaker.Faker;
 import guru.qa.niffler.config.Config;
 import guru.qa.niffler.jupiter.extension.BrowserExtension;
 import guru.qa.niffler.page.LoginPage;
 import guru.qa.niffler.page.RegisterPage;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+
+import static guru.qa.niffler.utils.RandomDataUtils.randomUsername;
+import static guru.qa.niffler.utils.RandomDataUtils.randomSentence;
 
 @ExtendWith(BrowserExtension.class)
 public class RegisterTest {
 
   private static final Config CFG = Config.getInstance();
-  private final Faker faker = new Faker();
 
   @Test
   void shouldRegisterNewUser() {
-    String newUser = faker.name().username();
+    String newUser = randomUsername();
     String password = "12345";
 
     RegisterPage registerPage =
@@ -40,7 +40,7 @@ public class RegisterTest {
             .doRegister();
 
     registerPage
-        .setUsername(faker.name().username())
+        .setUsername(randomUsername())
         .setPassword("12345")
         .setPasswordSubmit("123456")
         .submitRegistration()
@@ -72,7 +72,7 @@ public class RegisterTest {
             .doRegister();
 
     registerPage
-        .setUsername(StringUtils.repeat('a', 51))
+        .setUsername(randomSentence(51))
         .setPassword(password)
         .setPasswordSubmit(password)
         .submitRegistration()
@@ -88,7 +88,7 @@ public class RegisterTest {
             .doRegister();
 
     registerPage
-        .setUsername(faker.name().username())
+        .setUsername(randomUsername())
         .setPassword(password)
         .setPasswordSubmit(password)
         .submitRegistration()
@@ -97,14 +97,14 @@ public class RegisterTest {
 
   @Test
   void shouldShowErrorIfPasswordMaximumLength() {
-    String password = StringUtils.repeat('u', 13);
+    String password = randomSentence(13);
 
     RegisterPage registerPage =
         Selenide.open(CFG.frontUrl(), LoginPage.class)
             .doRegister();
 
     registerPage
-        .setUsername(faker.name().username())
+        .setUsername(randomUsername())
         .setPassword(password)
         .setPasswordSubmit(password)
         .submitRegistration()
@@ -133,7 +133,7 @@ public class RegisterTest {
             .doRegister();
 
     registerPage
-        .setUsername(faker.name().username())
+        .setUsername(randomUsername())
         .submitRegistration()
         .checkThatPasswordIsFilled();
   }
@@ -145,7 +145,7 @@ public class RegisterTest {
             .doRegister();
 
     registerPage
-        .setUsername(faker.name().username())
+        .setUsername(randomUsername())
         .setPassword("12345")
         .submitRegistration()
         .checkThatPasswordSubmitIsFilled();
