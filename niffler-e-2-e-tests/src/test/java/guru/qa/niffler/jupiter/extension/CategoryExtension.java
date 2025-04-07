@@ -3,6 +3,7 @@ package guru.qa.niffler.jupiter.extension;
 import guru.qa.niffler.api.SpendApiClient;
 import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.model.CategoryJson;
+import guru.qa.niffler.service.SpendDbClient;
 import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.extension.*;
 import org.junit.platform.commons.support.AnnotationSupport;
@@ -15,6 +16,7 @@ public class CategoryExtension implements BeforeEachCallback, AfterTestExecution
 
   public static final ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create(CategoryExtension.class);
   private final SpendApiClient spendApiClient = new SpendApiClient();
+  private final SpendDbClient spendDbClient = new SpendDbClient();
 
   @Override
   public void beforeEach(ExtensionContext context) {
@@ -28,7 +30,7 @@ public class CategoryExtension implements BeforeEachCallback, AfterTestExecution
                 userAnno.categories()[0].archived()
             );
 
-            CategoryJson created = spendApiClient.createCategory(category);
+            CategoryJson created = spendDbClient.createCategory(category);
             if (userAnno.categories()[0].archived()) {
               CategoryJson archivedCategory = new CategoryJson(
                   created.id(),
