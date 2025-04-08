@@ -63,7 +63,7 @@ public class UserdataUserDaoJdbc implements UserdataUserDao {
             ue.setUsername(rs.getString("username"));
             ue.setCurrency(CurrencyValues.valueOf(rs.getString("currency")));
             ue.setFirstname(rs.getString("firstname"));
-            ue.setFirstname(rs.getString("surname"));
+            ue.setSurname(rs.getString("surname"));
             ue.setPhoto(rs.getBytes("photo"));
             ue.setPhotoSmall(rs.getBytes("photo_small"));
             ue.setFullname(rs.getString("full_name"));
@@ -93,7 +93,7 @@ public class UserdataUserDaoJdbc implements UserdataUserDao {
             ue.setUsername(rs.getString("username"));
             ue.setCurrency(CurrencyValues.valueOf(rs.getString("currency")));
             ue.setFirstname(rs.getString("firstname"));
-            ue.setFirstname(rs.getString("surname"));
+            ue.setSurname(rs.getString("surname"));
             ue.setPhoto(rs.getBytes("photo"));
             ue.setPhotoSmall(rs.getBytes("photo_small"));
             ue.setFullname(rs.getString("full_name"));
@@ -116,8 +116,6 @@ public class UserdataUserDaoJdbc implements UserdataUserDao {
       )) {
         ps.setObject(1, user.getId());
         ps.executeUpdate();
-      } catch (SQLException e) {
-        throw new RuntimeException(e);
       }
     } catch (SQLException e) {
       throw new RuntimeException(e);

@@ -17,8 +17,8 @@ public class SpendDbClient {
   public SpendJson createSpend(SpendJson spend) {
     SpendEntity spendEntity = SpendEntity.fromJson(spend);
     if (spendEntity.getCategory().getId() == null) {
-      CategoryEntity categoryEntity = getOrCreateCategory(CategoryJson.fromEntity(spendEntity.getCategory()));
-      spendEntity.setCategory(categoryEntity);
+      CategoryJson categoryJson = getOrCreateCategory(CategoryJson.fromEntity(spendEntity.getCategory()));
+      spendEntity.setCategory(CategoryEntity.fromJson(categoryJson));
     }
     return SpendJson.fromEntity(
         spendDao.create(spendEntity)
@@ -32,8 +32,8 @@ public class SpendDbClient {
     );
   }
 
-  private CategoryEntity getOrCreateCategory(CategoryJson category) {
-    return categoryDao.findCategoryByUsernameAndCategoryName(category.username(), category.name())
-        .orElseGet(() -> CategoryEntity.fromJson(this.createCategory(category)));
+  private CategoryJson getOrCreateCategory(CategoryJson category) {
+    return CategoryJson.fromEntity(categoryDao.findCategoryByUsernameAndCategoryName(category.username(), category.name())
+        .orElseGet(() -> CategoryEntity.fromJson(this.createCategory(category))));
   }
 }

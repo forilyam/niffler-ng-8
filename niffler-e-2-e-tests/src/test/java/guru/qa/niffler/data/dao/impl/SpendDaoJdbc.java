@@ -73,8 +73,6 @@ public class SpendDaoJdbc implements SpendDao {
             return Optional.empty();
           }
         }
-      } catch (SQLException e) {
-        throw new RuntimeException(e);
       }
     } catch (SQLException e) {
       throw new RuntimeException(e);
@@ -104,8 +102,6 @@ public class SpendDaoJdbc implements SpendDao {
           }
         }
         return spends;
-      } catch (SQLException e) {
-        throw new RuntimeException(e);
       }
     } catch (SQLException e) {
       throw new RuntimeException(e);
@@ -120,8 +116,6 @@ public class SpendDaoJdbc implements SpendDao {
       )) {
         ps.setObject(1, spend.getId());
         ps.executeUpdate();
-      } catch (SQLException e) {
-        throw new RuntimeException(e);
       }
     } catch (SQLException e) {
       throw new RuntimeException(e);

@@ -119,8 +119,6 @@ public class CategoryDaoJdbc implements CategoryDao {
           }
         }
         return categories;
-      } catch (SQLException e) {
-        throw new RuntimeException(e);
       }
     } catch (SQLException e) {
       throw new RuntimeException(e);
@@ -135,8 +133,6 @@ public class CategoryDaoJdbc implements CategoryDao {
       )) {
         ps.setObject(1, category.getId());
         ps.executeUpdate();
-      } catch (SQLException e) {
-        throw new RuntimeException(e);
       }
     } catch (SQLException e) {
       throw new RuntimeException(e);
