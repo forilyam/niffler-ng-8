@@ -24,7 +24,7 @@ public class AuthUserDaoJdbc implements AuthUserDao {
   @Override
   public AuthUserEntity create(AuthUserEntity user) {
     try (PreparedStatement ps = connection.prepareStatement(
-        "INSERT INTO user (username, password, enabled, account_non_expired, account_non_locked, credentials_non_expired) " +
+        "INSERT INTO \"user\" (username, password, enabled, account_non_expired, account_non_locked, credentials_non_expired) " +
             "VALUES (?, ?, ?, ?, ?, ?)",
         PreparedStatement.RETURN_GENERATED_KEYS
     )) {
@@ -55,7 +55,7 @@ public class AuthUserDaoJdbc implements AuthUserDao {
   @Override
   public Optional<AuthUserEntity> findAuthUserById(UUID id) {
     try (PreparedStatement ps = connection.prepareStatement(
-        "SELECT * FROM user WHERE id = ?"
+        "SELECT * FROM \"user\" WHERE id = ?"
     )) {
       ps.setObject(1, id);
       ps.execute();
