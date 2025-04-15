@@ -1,23 +1,25 @@
 package guru.qa.niffler.data.dao.impl;
 
-import guru.qa.niffler.data.dao.UserdataUserDao;
+import guru.qa.niffler.data.dao.UdUserDao;
 import guru.qa.niffler.data.entity.userdata.UserEntity;
 import guru.qa.niffler.model.CurrencyValues;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public class UserdataUserDaoJdbc implements UserdataUserDao {
+public class UdUserDaoJdbc implements UdUserDao {
 
   private final Connection connection;
 
-  public UserdataUserDaoJdbc(Connection connection) {
+  public UdUserDaoJdbc(Connection connection) {
     this.connection = connection;
   }
 
   @Override
-  public UserEntity createUser(UserEntity user) {
+  public UserEntity create(UserEntity user) {
     try (PreparedStatement ps = connection.prepareStatement(
         "INSERT INTO \"user\" (username, currency, firstname, surname, photo, photo_small, full_name) " +
             "VALUES ( ?, ?, ?, ?, ?, ?, ?)",
@@ -110,6 +112,33 @@ public class UserdataUserDaoJdbc implements UserdataUserDao {
     )) {
       ps.setObject(1, user.getId());
       ps.executeUpdate();
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  @Override
+  public List<UserEntity> findAll() {
+    try (PreparedStatement ps = connection.prepareStatement(
+        "SELECT * FROM \"user\""
+    )) {
+      ps.execute();
+      List<UserEntity> users = new ArrayList<>();
+      try (ResultSet rs = ps.getResultSet()) {
+        while (rs.next()) {
+          UserEntity ue = new UserEntity();
+          ue.setId(rs.getObject("id", UUID.class));
+          ue.setUsername(rs.getString("username"));
+          ue.setCurrency(CurrencyValues.valueOf(rs.getString("currency")));
+          ue.setFirstname(rs.getString("firstname"));
+          ue.setSurname(rs.getString("firstname"));
+          ue.setPhoto(rs.getBytes("photo"));
+          ue.setPhotoSmall(rs.getBytes("photo_small"));
+          ue.setFullname(rs.getString("full_name"));
+          users.add(ue);
+        }
+        return users;
+      }
     } catch (SQLException e) {
       throw new RuntimeException(e);
     }
