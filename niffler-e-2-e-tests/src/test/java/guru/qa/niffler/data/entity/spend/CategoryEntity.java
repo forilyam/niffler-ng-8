@@ -13,7 +13,7 @@ public class CategoryEntity implements Serializable {
   private UUID id;
   private String name;
   private String username;
-  private boolean archived;
+  private Boolean archived;
 
   public CategoryEntity(UUID id) {
     this.id = id;
