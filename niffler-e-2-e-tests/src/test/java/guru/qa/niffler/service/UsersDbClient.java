@@ -9,6 +9,8 @@ import guru.qa.niffler.data.entity.auth.AuthUserEntity;
 import guru.qa.niffler.data.entity.auth.Authority;
 import guru.qa.niffler.data.entity.auth.AuthorityEntity;
 import guru.qa.niffler.data.entity.userdata.UserEntity;
+import guru.qa.niffler.data.repository.AuthUserRepository;
+import guru.qa.niffler.data.repository.impl.jdbc.AuthUserRepositoryJdbc;
 import guru.qa.niffler.data.tpl.XaTransactionTemplate;
 import guru.qa.niffler.model.UserJson;
 import org.springframework.data.transaction.ChainedTransactionManager;
@@ -26,6 +28,8 @@ public class UsersDbClient {
 
   private static final Config CFG = Config.getInstance();
   private static final PasswordEncoder pe = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+
+  private final AuthUserRepository authUserRepository = new AuthUserRepositoryJdbc();
 
   private final AuthUserDao authUserDaoSpringJdbc = new AuthUserDaoSpringJdbc();
   private final AuthAuthorityDao authAuthorityDaoSpringJdbc = new AuthAuthorityDaoSpringJdbc();
@@ -45,6 +49,7 @@ public class UsersDbClient {
           )
       )
   );
+
   private final TransactionTemplate txTemplate = new TransactionTemplate(
       new JdbcTransactionManager(
           dataSource(CFG.authJdbcUrl())
@@ -60,25 +65,23 @@ public class UsersDbClient {
   public UserJson txCreateUserSpringJdbc(UserJson user) {
     return xaTransactionTemplate.execute(() -> {
           AuthUserEntity authUser = new AuthUserEntity();
-          authUser.setUsername(null);
+          authUser.setUsername(user.username());
           authUser.setPassword(pe.encode("12345"));
           authUser.setEnabled(true);
           authUser.setAccountNonExpired(true);
           authUser.setAccountNonLocked(true);
           authUser.setCredentialsNonExpired(true);
-
-          AuthUserEntity createdAuthUser = authUserDaoSpringJdbc.create(authUser);
-
-          AuthorityEntity[] authorityEntities = Arrays.stream(Authority.values()).map(
-              e -> {
-                AuthorityEntity ae = new AuthorityEntity();
-                ae.setUserId(createdAuthUser.getId());
-                ae.setAuthority(e);
-                return ae;
-              }
-          ).toArray(AuthorityEntity[]::new);
-
-          authAuthorityDaoSpringJdbc.create(authorityEntities);
+          authUser.setAuthorities(
+              Arrays.stream(Authority.values()).map(
+                  e -> {
+                    AuthorityEntity ae = new AuthorityEntity();
+                    ae.setUser(authUser);
+                    ae.setAuthority(e);
+                    return ae;
+                  }
+              ).toList()
+          );
+          authUserRepository.create(authUser);
           return UserJson.fromEntity(
               udUserDaoSpringJdbc.create(UserEntity.fromJson(user)),
               null
@@ -102,7 +105,7 @@ public class UsersDbClient {
     AuthorityEntity[] authorityEntities = Arrays.stream(Authority.values()).map(
         e -> {
           AuthorityEntity ae = new AuthorityEntity();
-          ae.setUserId(createdAuthUser.getId());
+          ae.setUser(createdAuthUser);
           ae.setAuthority(e);
           return ae;
         }
@@ -131,7 +134,7 @@ public class UsersDbClient {
           AuthorityEntity[] authorityEntities = Arrays.stream(Authority.values()).map(
               e -> {
                 AuthorityEntity ae = new AuthorityEntity();
-                ae.setUserId(createdAuthUser.getId());
+                ae.setUser(createdAuthUser);
                 ae.setAuthority(e);
                 return ae;
               }
@@ -161,7 +164,7 @@ public class UsersDbClient {
     AuthorityEntity[] authorityEntities = Arrays.stream(Authority.values()).map(
         e -> {
           AuthorityEntity ae = new AuthorityEntity();
-          ae.setUserId(createdAuthUser.getId());
+          ae.setUser(createdAuthUser);
           ae.setAuthority(e);
           return ae;
         }
@@ -189,7 +192,7 @@ public class UsersDbClient {
       AuthorityEntity[] userAuthorities = Arrays.stream(Authority.values()).map(
           e -> {
             AuthorityEntity ae = new AuthorityEntity();
-            ae.setUserId(createdAuthUser.getId());
+            ae.setUser(createdAuthUser);
             ae.setAuthority(e);
             return ae;
           }).toArray(AuthorityEntity[]::new);
