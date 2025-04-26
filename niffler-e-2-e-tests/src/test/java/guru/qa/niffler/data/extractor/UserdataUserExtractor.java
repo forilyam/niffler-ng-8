@@ -25,8 +25,8 @@ public class UserdataUserExtractor implements ResultSetExtractor<UserEntity> {
       if (user == null) {
         user = UdUserEntityRowMapper.instance.mapRow(rs, 0);
       }
-      UUID requesterId = (UUID) rs.getObject("requester_id");
-      UUID addresseeId = (UUID) rs.getObject("addressee_id");
+      UUID requesterId = rs.getObject("requester_id", UUID.class);
+      UUID addresseeId = rs.getObject("addressee_id", UUID.class);
       if (requesterId != null) {
         FriendshipEntity friendship = new FriendshipEntity();
         friendship.setRequester(new UserEntity(requesterId));

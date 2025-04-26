@@ -68,8 +68,8 @@ public class UserdataUserRepositoryJdbc implements UserdataUserRepository {
           ue.setFirstname((rs.getString("firstname")));
           ue.setSurname((rs.getString("surname")));
           ue.setFullname((rs.getString("full_name")));
-          ue.setPhoto((rs.getBytes("photo_small")));
-          ue.setPhotoSmall((rs.getBytes("photoSmall")));
+          ue.setPhoto((rs.getBytes("photo")));
+          ue.setPhotoSmall((rs.getBytes("photo_small")));
           return Optional.of(ue);
         } else {
           return Optional.empty();
@@ -82,28 +82,21 @@ public class UserdataUserRepositoryJdbc implements UserdataUserRepository {
 
   @Override
   public void addIncomeInvitation(UserEntity requester, UserEntity addressee) {
+    addInvitation(requester, addressee);
+  }
+
+  @Override
+  public void addOutcomeInvitation(UserEntity requester, UserEntity addressee) {
+    addInvitation(addressee, requester);
+  }
+
+  private static void addInvitation(UserEntity requester, UserEntity addressee) {
     try (PreparedStatement ps = holder(CFG.userdataJdbcUrl()).connection().prepareStatement(
         "INSERT INTO friendship (requester_id, addressee_id, status, created_date) " +
             "VALUES (?, ?, ?, ?)"
     )) {
       ps.setObject(1, requester.getId());
       ps.setObject(2, addressee.getId());
-      ps.setString(3, PENDING.name());
-      ps.setObject(4, new Date());
-      ps.executeUpdate();
-    } catch (SQLException e) {
-      throw new RuntimeException(e);
-    }
-  }
-
-  @Override
-  public void addOutcomeInvitation(UserEntity requester, UserEntity addressee) {
-    try (PreparedStatement ps = holder(CFG.userdataJdbcUrl()).connection().prepareStatement(
-        "INSERT INTO friendship (requester_id, addressee_id, status, created_date) " +
-            "VALUES (?, ?, ?, ?)"
-    )) {
-      ps.setObject(1, addressee.getId());
-      ps.setObject(2, requester.getId());
       ps.setString(3, PENDING.name());
       ps.setObject(4, new Date());
       ps.executeUpdate();
