@@ -3,7 +3,7 @@ package guru.qa.niffler.data.extractor;
 import guru.qa.niffler.data.entity.userdata.FriendshipEntity;
 import guru.qa.niffler.data.entity.userdata.FriendshipStatus;
 import guru.qa.niffler.data.entity.userdata.UserEntity;
-import guru.qa.niffler.data.mapper.UdUserEntityRowMapper;
+import guru.qa.niffler.data.mapper.UserdataUserEntityRowMapper;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 
@@ -23,7 +23,7 @@ public class UserdataUserExtractor implements ResultSetExtractor<UserEntity> {
     UserEntity user = null;
     while (rs.next()) {
       if (user == null) {
-        user = UdUserEntityRowMapper.instance.mapRow(rs, 0);
+        user = UserdataUserEntityRowMapper.instance.mapRow(rs, 0);
       }
       UUID requesterId = rs.getObject("requester_id", UUID.class);
       UUID addresseeId = rs.getObject("addressee_id", UUID.class);

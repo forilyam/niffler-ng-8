@@ -4,6 +4,7 @@ import guru.qa.niffler.config.Config;
 import guru.qa.niffler.data.dao.AuthAuthorityDao;
 import guru.qa.niffler.data.entity.auth.Authority;
 import guru.qa.niffler.data.entity.auth.AuthorityEntity;
+import guru.qa.niffler.data.mapper.AuthorityEntityRowMapper;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -17,10 +18,11 @@ import static guru.qa.niffler.data.tpl.Connections.holder;
 public class AuthAuthorityDaoJdbc implements AuthAuthorityDao {
 
   private static final Config CFG = Config.getInstance();
+  private final String url = CFG.authJdbcUrl();
 
   @Override
   public void create(AuthorityEntity... authority) {
-    try (PreparedStatement ps = holder(CFG.authJdbcUrl()).connection().prepareStatement(
+    try (PreparedStatement ps = holder(url).connection().prepareStatement(
         "INSERT INTO \"authority\" (user_id, authority) VALUES (?, ?)",
         PreparedStatement.RETURN_GENERATED_KEYS)) {
       for (AuthorityEntity a : authority) {
@@ -37,7 +39,7 @@ public class AuthAuthorityDaoJdbc implements AuthAuthorityDao {
 
   @Override
   public List<AuthorityEntity> findAll() {
-    try (PreparedStatement ps = holder(CFG.authJdbcUrl()).connection().prepareStatement(
+    try (PreparedStatement ps = holder(url).connection().prepareStatement(
         "SELECT * FROM \"authority\""
     )) {
       ps.execute();
@@ -52,6 +54,24 @@ public class AuthAuthorityDaoJdbc implements AuthAuthorityDao {
         }
         return authorities;
       }
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  @Override
+  public List<AuthorityEntity> findAllByUserId(UUID userId) {
+    try (PreparedStatement ps = holder(url).connection().prepareStatement(
+        "SELECT * FROM authority where user_id = ?")) {
+      ps.setObject(1, userId);
+      ps.execute();
+      List<AuthorityEntity> result = new ArrayList<>();
+      try (ResultSet rs = ps.getResultSet()) {
+        while (rs.next()) {
+          result.add(AuthorityEntityRowMapper.instance.mapRow(rs, rs.getRow()));
+        }
+      }
+      return result;
     } catch (SQLException e) {
       throw new RuntimeException(e);
     }
