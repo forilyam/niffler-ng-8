@@ -2,6 +2,7 @@ package guru.qa.niffler.data.dao.impl;
 
 import guru.qa.niffler.config.Config;
 import guru.qa.niffler.data.dao.UdUserDao;
+import guru.qa.niffler.data.entity.userdata.FriendshipEntity;
 import guru.qa.niffler.data.entity.userdata.UserEntity;
 import guru.qa.niffler.model.CurrencyValues;
 
@@ -18,14 +19,22 @@ import static guru.qa.niffler.data.tpl.Connections.holder;
 public class UdUserDaoJdbc implements UdUserDao {
 
   private static final Config CFG = Config.getInstance();
+  private final String url = CFG.userdataJdbcUrl();
 
   @Override
   public UserEntity create(UserEntity user) {
     try (PreparedStatement ps = holder(CFG.userdataJdbcUrl()).connection().prepareStatement(
-        "INSERT INTO \"user\" (username, currency) VALUES (?, ?)",
-        PreparedStatement.RETURN_GENERATED_KEYS)) {
+        "INSERT INTO \"user\" (username, currency, firstname, surname, full_name, photo, photo_small) " +
+            "VALUES (?, ?, ?, ?, ?, ?, ? )",
+        PreparedStatement.RETURN_GENERATED_KEYS
+    )) {
       ps.setString(1, user.getUsername());
       ps.setString(2, user.getCurrency().name());
+      ps.setString(3, user.getFirstname());
+      ps.setString(4, user.getSurname());
+      ps.setString(5, user.getFullname());
+      ps.setBytes(6, user.getPhoto());
+      ps.setBytes(7, user.getPhotoSmall());
       ps.executeUpdate();
       final UUID generatedUserId;
       try (ResultSet rs = ps.getGeneratedKeys()) {
@@ -43,8 +52,40 @@ public class UdUserDaoJdbc implements UdUserDao {
   }
 
   @Override
+  public UserEntity update(UserEntity user) {
+    try (PreparedStatement usersPs = holder(url).connection().prepareStatement(
+        "UPDATE \"user\" SET currency = ?, firstname = ?, surname = ?, photo = ?, photo_small = ? " +
+            "WHERE id = ?");
+         PreparedStatement friendsPs = holder(url).connection().prepareStatement(
+             "INSERT INTO friendship (requester_id, addressee_id, status) VALUES (?, ?, ?) " +
+                 "ON CONFLICT (requester_id, addressee_id) DO UPDATE SET status = ?")
+    ) {
+      usersPs.setString(1, user.getCurrency().name());
+      usersPs.setString(2, user.getFirstname());
+      usersPs.setString(3, user.getSurname());
+      usersPs.setBytes(4, user.getPhoto());
+      usersPs.setBytes(5, user.getPhotoSmall());
+      usersPs.setObject(6, user.getId());
+      usersPs.executeUpdate();
+
+      for (FriendshipEntity fe : user.getFriendshipRequests()) {
+        friendsPs.setObject(1, user.getId());
+        friendsPs.setObject(2, fe.getAddressee().getId());
+        friendsPs.setString(3, fe.getStatus().name());
+        friendsPs.setString(4, fe.getStatus().name());
+        friendsPs.addBatch();
+        friendsPs.clearParameters();
+      }
+      friendsPs.executeBatch();
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
+    return user;
+  }
+
+  @Override
   public Optional<UserEntity> findById(UUID id) {
-    try (PreparedStatement ps = holder(CFG.userdataJdbcUrl()).connection().prepareStatement(
+    try (PreparedStatement ps = holder(url).connection().prepareStatement(
         "SELECT * FROM \"user\" WHERE id = ?"
     )) {
       ps.setObject(1, id);
@@ -72,7 +113,7 @@ public class UdUserDaoJdbc implements UdUserDao {
 
   @Override
   public Optional<UserEntity> findByUsername(String username) {
-    try (PreparedStatement ps = holder(CFG.userdataJdbcUrl()).connection().prepareStatement(
+    try (PreparedStatement ps = holder(url).connection().prepareStatement(
         "SELECT * FROM \"user\" WHERE username = ?"
     )) {
       ps.setString(1, username);
@@ -100,7 +141,7 @@ public class UdUserDaoJdbc implements UdUserDao {
 
   @Override
   public void delete(UserEntity user) {
-    try (PreparedStatement ps = holder(CFG.userdataJdbcUrl()).connection().prepareStatement(
+    try (PreparedStatement ps = holder(url).connection().prepareStatement(
         "DELETE FROM \"user\" WHERE id = ?"
     )) {
       ps.setObject(1, user.getId());
@@ -112,7 +153,7 @@ public class UdUserDaoJdbc implements UdUserDao {
 
   @Override
   public List<UserEntity> findAll() {
-    try (PreparedStatement ps = holder(CFG.userdataJdbcUrl()).connection().prepareStatement(
+    try (PreparedStatement ps = holder(url).connection().prepareStatement(
         "SELECT * FROM \"user\""
     )) {
       ps.execute();

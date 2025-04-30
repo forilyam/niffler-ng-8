@@ -6,130 +6,64 @@ import guru.qa.niffler.model.SpendJson;
 import guru.qa.niffler.model.UserJson;
 import guru.qa.niffler.service.SpendDbClient;
 import guru.qa.niffler.service.UsersDbClient;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.Date;
+import java.util.Optional;
 
-@Disabled
+import static guru.qa.niffler.utils.RandomDataUtils.randomCategoryName;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+//@Disabled
 public class JdbcTest {
 
   @Test
-  void txTest() {
+  void createSpendTest() {
     SpendDbClient spendDbClient = new SpendDbClient();
-
-    SpendJson spend = spendDbClient.createSpend(
+    String username = "duck-15";
+    SpendJson spend = spendDbClient.create(
         new SpendJson(
             null,
             new Date(),
             new CategoryJson(
                 null,
-                "cat-name-tx-2",
-                "duck",
+                randomCategoryName(),
+                username,
                 false
             ),
             CurrencyValues.RUB,
-            1000.0,
-            "spend-name-tx",
-            null
+            100.0,
+            "description",
+            username
         )
     );
+    assertThat(spend).isNotNull();
 
-    System.out.println(spend);
+    Optional<SpendJson> createdSpend = spendDbClient.findByUsernameAndSpendDescription(spend.username(), spend.description());
+    assertTrue(createdSpend.isPresent());
+
+    Optional<CategoryJson> createdCategory = spendDbClient.findCategoryByUsernameAndCategoryName(spend.username(), spend.category().name());
+    assertTrue(createdCategory.isPresent());
   }
 
-  @Test
-  void springJdbcTxTest() {
+  @ValueSource(strings = {
+      "valentin-12"
+  })
+  @ParameterizedTest
+  void createUserTest(String uname) {
     UsersDbClient usersDbClient = new UsersDbClient();
-    UserJson user = usersDbClient.txCreateUserSpringJdbc(
-        new UserJson(
-            null,
-            "springJdbcTx-1",
-            null,
-            null,
-            null,
-            CurrencyValues.RUB,
-            null,
-            null,
-            null
-        )
+
+    UserJson user = usersDbClient.createUser(
+        uname,
+        "12345"
     );
-    System.out.println(user);
+
+    usersDbClient.createIncomeInvitations(user, 1);
+    usersDbClient.createOutcomeInvitations(user, 1);
+    usersDbClient.createFriends(user, 1);
   }
 
-  @Test
-  void springJdbcTest() {
-    UsersDbClient usersDbClient = new UsersDbClient();
-    UserJson user = usersDbClient.createUserSpringJdbc(
-        new UserJson(
-            null,
-            "springJdbc-1",
-            null,
-            null,
-            null,
-            CurrencyValues.RUB,
-            null,
-            null,
-            null
-        )
-    );
-    System.out.println(user);
-  }
-
-  @Test
-  void jdbcTxTest() {
-    UsersDbClient usersDbClient = new UsersDbClient();
-    UserJson user = usersDbClient.txCreateUserJdbc(
-        new UserJson(
-            null,
-            "jdbcTx-1",
-            null,
-            null,
-            null,
-            CurrencyValues.RUB,
-            null,
-            null,
-            null
-        )
-    );
-    System.out.println(user);
-  }
-
-  @Test
-  void jdbcTest() {
-    UsersDbClient usersDbClient = new UsersDbClient();
-    UserJson user = usersDbClient.createUserJdbc(
-        new UserJson(
-            null,
-            "jdbc-1",
-            null,
-            null,
-            null,
-            CurrencyValues.RUB,
-            null,
-            null,
-            null
-        )
-    );
-    System.out.println(user);
-  }
-
-  @Test
-  void springJdbcChainedTxTest() {
-    UsersDbClient usersDbClient = new UsersDbClient();
-    UserJson user = usersDbClient.chainedTxCreateUserSpringJdbc(
-        new UserJson(
-            null,
-            "springJdbcChainedTx-1",
-            null,
-            null,
-            null,
-            CurrencyValues.RUB,
-            null,
-            null,
-            null
-        )
-    );
-    System.out.println(user);
-  }
 }
