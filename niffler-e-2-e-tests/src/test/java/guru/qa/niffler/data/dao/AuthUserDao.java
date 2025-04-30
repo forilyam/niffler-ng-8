@@ -12,6 +12,8 @@ public interface AuthUserDao {
 
   AuthUserEntity update(AuthUserEntity user);
 
+  void updateUserAuthority(AuthUserEntity user);
+
   Optional<AuthUserEntity> findById(UUID id);
 
   Optional<AuthUserEntity> findByUsername(String username);

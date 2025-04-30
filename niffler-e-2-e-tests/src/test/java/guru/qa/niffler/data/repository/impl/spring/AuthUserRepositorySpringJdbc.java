@@ -26,6 +26,7 @@ public class AuthUserRepositorySpringJdbc implements AuthUserRepository {
   @Override
   public AuthUserEntity update(AuthUserEntity user) {
     authUserDao.update(user);
+    authUserDao.updateUserAuthority(user);
     return user;
   }
 

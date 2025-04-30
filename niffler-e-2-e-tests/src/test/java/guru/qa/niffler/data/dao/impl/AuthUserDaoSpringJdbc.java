@@ -51,8 +51,6 @@ public class AuthUserDaoSpringJdbc implements AuthUserDao {
     String updateUserSql = "UPDATE \"user\" SET password = ?, enabled = ?, " +
         "account_non_expired = ?, account_non_locked = ?, credentials_non_expired = ? " +
         "WHERE id = ?";
-    String clearAuthoritySql = "DELETE FROM \"authority\" WHERE user_id = ?";
-    String insertAuthoritySql = "INSERT INTO \"authority\" (user_id, authority) VALUES (?, ?)";
 
     jdbcTemplate.update(
         updateUserSql,
@@ -63,13 +61,21 @@ public class AuthUserDaoSpringJdbc implements AuthUserDao {
         user.getCredentialsNonExpired(),
         user.getId()
     );
+    return user;
+  }
+
+  @Override
+  public void updateUserAuthority(AuthUserEntity user) {
+    JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(url));
+    String clearAuthoritySql = "DELETE FROM \"authority\" WHERE user_id = ?";
+    String insertAuthoritySql = "INSERT INTO \"authority\" (user_id, authority) VALUES (?, ?)";
+
     jdbcTemplate.update(clearAuthoritySql, user.getId());
     jdbcTemplate.batchUpdate(insertAuthoritySql, user.getAuthorities(), user.getAuthorities().size(),
         (ps, authority) -> {
           ps.setObject(1, user.getId());
           ps.setString(2, authority.getAuthority().name());
         });
-    return user;
   }
 
   @Override

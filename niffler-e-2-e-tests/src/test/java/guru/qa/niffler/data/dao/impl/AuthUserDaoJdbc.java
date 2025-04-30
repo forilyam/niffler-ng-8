@@ -55,20 +55,7 @@ public class AuthUserDaoJdbc implements AuthUserDao {
     String updateUserSql = "UPDATE \"user\" SET password = ?, enabled = ?, " +
         "account_non_expired = ?, account_non_locked = ?, credentials_non_expired = ? " +
         "WHERE id = ?";
-    String clearAuthoritySql = "DELETE FROM \"authority\" WHERE user_id = ?";
-    String insertAuthoritySql = "INSERT INTO \"authority\" (user_id, authority) VALUES (?, ?)";
-    try (PreparedStatement updateUserPs = holder(url).connection().prepareStatement(updateUserSql);
-         PreparedStatement clearAuthorityPs = holder(url).connection().prepareStatement(clearAuthoritySql);
-         PreparedStatement authorityPs = holder(url).connection().prepareStatement(insertAuthoritySql)) {
-      clearAuthorityPs.setObject(1, user.getId());
-      clearAuthorityPs.executeUpdate();
-
-      for (AuthorityEntity authority : user.getAuthorities()) {
-        authorityPs.setObject(1, user.getId());
-        authorityPs.setString(2, authority.getAuthority().name());
-        authorityPs.addBatch();
-      }
-      authorityPs.executeBatch();
+    try (PreparedStatement updateUserPs = holder(url).connection().prepareStatement(updateUserSql);) {
 
       updateUserPs.setString(1, user.getPassword());
       updateUserPs.setBoolean(2, user.getEnabled());
@@ -79,6 +66,26 @@ public class AuthUserDaoJdbc implements AuthUserDao {
       updateUserPs.executeUpdate();
 
       return user;
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  @Override
+  public void updateUserAuthority(AuthUserEntity user) {
+    String clearAuthoritySql = "DELETE FROM \"authority\" WHERE user_id = ?";
+    String insertAuthoritySql = "INSERT INTO \"authority\" (user_id, authority) VALUES (?, ?)";
+    try (PreparedStatement clearAuthorityPs = holder(url).connection().prepareStatement(clearAuthoritySql);
+         PreparedStatement authorityPs = holder(url).connection().prepareStatement(insertAuthoritySql)) {
+      clearAuthorityPs.setObject(1, user.getId());
+      clearAuthorityPs.executeUpdate();
+
+      for (AuthorityEntity authority : user.getAuthorities()) {
+        authorityPs.setObject(1, user.getId());
+        authorityPs.setString(2, authority.getAuthority().name());
+        authorityPs.addBatch();
+      }
+      authorityPs.executeBatch();
     } catch (SQLException e) {
       throw new RuntimeException(e);
     }
