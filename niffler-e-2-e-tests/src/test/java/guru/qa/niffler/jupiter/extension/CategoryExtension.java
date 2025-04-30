@@ -33,13 +33,9 @@ public class CategoryExtension implements
     AnnotationSupport.findAnnotation(context.getRequiredTestMethod(), User.class)
         .ifPresent(userAnno -> {
           if (ArrayUtils.isNotEmpty(userAnno.categories())) {
-            UserJson user = context.getStore(UserExtension.NAMESPACE).get(
-                context.getUniqueId(),
-                UserJson.class
-            );
-
-            final String username = user != null
-                ? user.username()
+            UserJson createdUser = UserExtension.createdUser();
+            final String username = createdUser != null
+                ? createdUser.username()
                 : userAnno.username();
 
             final List<CategoryJson> createdCategories = new ArrayList<>();
@@ -55,8 +51,9 @@ public class CategoryExtension implements
                   spendClient.createCategory(category)
               );
             }
-            if (user != null) {
-              user.testData().categories().addAll(
+
+            if (createdUser != null) {
+              createdUser.testData().categories().addAll(
                   createdCategories
               );
             } else {

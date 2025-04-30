@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import guru.qa.niffler.data.entity.userdata.UserEntity;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.UUID;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -42,11 +43,34 @@ public record UserJson(
         entity.getPhoto() != null && entity.getPhoto().length > 0 ? new String(entity.getPhoto(), StandardCharsets.UTF_8) : null,
         entity.getPhotoSmall() != null && entity.getPhotoSmall().length > 0 ? new String(entity.getPhotoSmall(), StandardCharsets.UTF_8) : null,
         friendshipStatus,
-        null
+        new TestData(
+            null,
+            new ArrayList<>(),
+            new ArrayList<>()
+        )
     );
   }
 
-  public UserJson addTestData(TestData testData) {
-    return new UserJson(id, username, firstname, surname, fullname, currency, photo, photoSmall, friendshipStatus, testData);
+  public UserJson withPassword(String paasword) {
+    return withTestData(
+        new TestData(
+            paasword,
+            testData.categories(),
+            testData.spendings()
+        )
+    );
+  }
+
+  public UserJson withTestData(TestData testData) {
+    return new UserJson(id,
+        username,
+        firstname,
+        surname,
+        fullname,
+        currency,
+        photo,
+        photoSmall,
+        friendshipStatus,
+        testData);
   }
 }

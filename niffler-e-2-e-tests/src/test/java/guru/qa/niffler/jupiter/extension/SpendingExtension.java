@@ -30,16 +30,12 @@ public class SpendingExtension implements BeforeEachCallback, ParameterResolver 
     AnnotationSupport.findAnnotation(context.getRequiredTestMethod(), User.class)
         .ifPresent(userAnno -> {
           if (ArrayUtils.isNotEmpty(userAnno.spendings())) {
-            UserJson user = context.getStore(UserExtension.NAMESPACE).get(
-                context.getUniqueId(),
-                UserJson.class
-            );
-
-            final String username = user != null
-                ? user.username()
+            UserJson createdUser = UserExtension.createdUser();
+            final String username = createdUser != null
+                ? createdUser.username()
                 : userAnno.username();
 
-            final List<SpendJson> createdSpends = new ArrayList<>();
+            final List<SpendJson> createdSpendings = new ArrayList<>();
 
             for (Spending spendAnno : userAnno.spendings()) {
               SpendJson spend = new SpendJson(
@@ -57,18 +53,18 @@ public class SpendingExtension implements BeforeEachCallback, ParameterResolver 
                   username
               );
 
-              createdSpends.add(
+              createdSpendings.add(
                   spendClient.create(spend)
               );
             }
-            if (user != null) {
-              user.testData().spendings().addAll(
-                  createdSpends
+            if (createdUser != null) {
+              createdUser.testData().spendings().addAll(
+                  createdSpendings
               );
             } else {
               context.getStore(NAMESPACE).put(
                   context.getUniqueId(),
-                  createdSpends
+                  createdSpendings
               );
             }
           }
