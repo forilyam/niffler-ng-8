@@ -3,8 +3,9 @@ package guru.qa.niffler.data.dao.impl;
 import guru.qa.niffler.config.Config;
 import guru.qa.niffler.data.dao.SpendDao;
 import guru.qa.niffler.data.entity.spend.SpendEntity;
+import guru.qa.niffler.data.jdbc.DataSources;
 import guru.qa.niffler.data.mapper.SpendEntityRowMapper;
-import guru.qa.niffler.data.tpl.DataSources;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -26,8 +27,10 @@ public class SpendDaoSpringJdbc implements SpendDao {
     KeyHolder kh = new GeneratedKeyHolder();
     jdbcTemplate.update(con -> {
       PreparedStatement ps = con.prepareStatement(
-          "INSERT INTO \"spend\" (username, spend_date, currency, amount, description, category_id) " +
-              "VALUES ( ?, ?, ?, ?, ?, ?)",
+          """
+                  INSERT INTO spend (username, spend_date, currency, amount, description, category_id)
+                  VALUES ( ?, ?, ?, ?, ?, ?)
+              """,
           Statement.RETURN_GENERATED_KEYS
       );
       ps.setString(1, spend.getUsername());
@@ -48,8 +51,14 @@ public class SpendDaoSpringJdbc implements SpendDao {
   public SpendEntity update(SpendEntity spend) {
     JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(url));
     jdbcTemplate.update(
-        "UPDATE \"spend\" SET spend_date = ?, currency = ?, amount = ?, description = ? " +
-            "WHERE id = ?",
+        """
+                UPDATE "spend"
+                  SET spend_date =  ?,
+                      currency =    ?,
+                      amount =      ?,
+                      description = ?,
+                  WHERE id = ?
+            """,
         new java.sql.Date(spend.getSpendDate().getTime()),
         spend.getCurrency().name(),
         spend.getAmount(),
@@ -62,20 +71,28 @@ public class SpendDaoSpringJdbc implements SpendDao {
   @Override
   public Optional<SpendEntity> findById(UUID id) {
     JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(url));
-    return Optional.ofNullable(
-        jdbcTemplate.queryForObject(
-            "SELECT * FROM spend WHERE id = ?",
-            SpendEntityRowMapper.instance,
-            id
-        )
-    );
+    try {
+      return Optional.ofNullable(
+          jdbcTemplate.queryForObject(
+              """
+                     SELECT * FROM "spend" WHERE id = ?
+                  """,
+              SpendEntityRowMapper.instance,
+              id
+          )
+      );
+    } catch (EmptyResultDataAccessException e) {
+      return Optional.empty();
+    }
   }
 
   @Override
   public List<SpendEntity> findAllByUsername(String username) {
     JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(url));
     return jdbcTemplate.query(
-        "SELECT * FROM \"spend\" WHERE username = ?",
+        """
+               SELECT * FROM "spend" WHERE username = ?
+            """,
         SpendEntityRowMapper.instance,
         username
     );
@@ -84,14 +101,20 @@ public class SpendDaoSpringJdbc implements SpendDao {
   @Override
   public void delete(SpendEntity spend) {
     JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(url));
-    jdbcTemplate.update("DELETE FROM spend WHERE id = ?", spend.getId());
+    jdbcTemplate.update(
+        """
+               DELETE * FROM "spend" WHERE id = ?
+            """,
+        spend.getId());
   }
 
   @Override
   public List<SpendEntity> findAll() {
     JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(url));
     return jdbcTemplate.query(
-        "SELECT * FROM \"spend\"",
+        """
+               SELECT * FROM "spend"
+            """,
         SpendEntityRowMapper.instance
     );
   }
@@ -101,7 +124,9 @@ public class SpendDaoSpringJdbc implements SpendDao {
     JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(url));
     return Optional.ofNullable(
         jdbcTemplate.queryForObject(
-            "SELECT * FROM \"spend\" WHERE username = ? and description = ?",
+            """
+                   SELECT * FROM "spend" WHERE username = ? and description = ?
+                """,
             SpendEntityRowMapper.instance,
             username,
             description

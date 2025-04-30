@@ -24,29 +24,24 @@ public class SpendDbClient implements SpendClient {
 
   @Override
   public SpendJson create(SpendJson spend) {
-    return xaTransactionTemplate.execute(() -> {
-          spendRepository.create(SpendEntity.fromJson(spend));
-          SpendEntity spendEntity = SpendEntity.fromJson(spend);
-          return SpendJson.fromEntity(spendEntity);
-        }
+    return xaTransactionTemplate.execute(() -> SpendJson.fromEntity(
+            spendRepository.create(SpendEntity.fromJson(spend))
+        )
     );
   }
 
   @Override
   public SpendJson update(SpendJson spend) {
-    return xaTransactionTemplate.execute(() -> {
-      SpendEntity spendEntity = SpendEntity.fromJson(spend);
-      SpendEntity updatedEntity = spendRepository.update(spendEntity);
-      return SpendJson.fromEntity(updatedEntity);
-    });
+    return xaTransactionTemplate.execute(() -> SpendJson.fromEntity(
+            spendRepository.update(SpendEntity.fromJson(spend))
+        )
+    );
   }
 
   public CategoryJson createCategory(CategoryJson category) {
-    return xaTransactionTemplate.execute(() -> {
-          spendRepository.createCategory(CategoryEntity.fromJson(category));
-          CategoryEntity categoryEntity = CategoryEntity.fromJson(category);
-          return CategoryJson.fromEntity(categoryEntity);
-        }
+    return xaTransactionTemplate.execute(() -> CategoryJson.fromEntity(
+            spendRepository.createCategory(CategoryEntity.fromJson(category))
+        )
     );
   }
 

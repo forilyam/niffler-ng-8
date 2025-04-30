@@ -4,7 +4,8 @@ import guru.qa.niffler.config.Config;
 import guru.qa.niffler.data.dao.CategoryDao;
 import guru.qa.niffler.data.entity.spend.CategoryEntity;
 import guru.qa.niffler.data.mapper.CategoryEntityRowMapper;
-import guru.qa.niffler.data.tpl.DataSources;
+import guru.qa.niffler.data.jdbc.DataSources;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -26,7 +27,10 @@ public class CategoryDaoSpringJdbc implements CategoryDao {
     KeyHolder kh = new GeneratedKeyHolder();
     jdbcTemplate.update(con -> {
       PreparedStatement ps = con.prepareStatement(
-          "INSERT INTO \"category\" (name, username, archived) VALUES (?,?,?)",
+          """
+                  INSERT INTO category (username, name, archived)
+                  VALUES (?, ?, ?)
+              """,
           Statement.RETURN_GENERATED_KEYS
       );
       ps.setString(1, category.getName());
@@ -44,7 +48,12 @@ public class CategoryDaoSpringJdbc implements CategoryDao {
   public CategoryEntity update(CategoryEntity category) {
     JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(url));
     jdbcTemplate.update(
-        "UPDATE \"category\" SET name = ?, archived = ? WHERE id = ?",
+        """
+                UPDATE "category"
+                  SET name =     ?,
+                      archived = ?,
+                  WHERE id = ?
+            """,
         category.getName(),
         category.isArchived(),
         category.getId()
@@ -55,13 +64,19 @@ public class CategoryDaoSpringJdbc implements CategoryDao {
   @Override
   public Optional<CategoryEntity> findById(UUID id) {
     JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(url));
-    return Optional.ofNullable(
-        jdbcTemplate.queryForObject(
-            "SELECT * FROM \"category\" WHERE id = ?",
-            CategoryEntityRowMapper.instance,
-            id
-        )
-    );
+    try {
+      return Optional.ofNullable(
+          jdbcTemplate.queryForObject(
+              """
+                     SELECT * FROM "category" WHERE id = ?
+                  """,
+              CategoryEntityRowMapper.instance,
+              id
+          )
+      );
+    } catch (EmptyResultDataAccessException e) {
+      return Optional.empty();
+    }
   }
 
   @Override
@@ -69,7 +84,9 @@ public class CategoryDaoSpringJdbc implements CategoryDao {
     JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(url));
     return Optional.ofNullable(
         jdbcTemplate.queryForObject(
-            "SELECT * FROM \"category\" WHERE username = ? AND name = ?",
+            """
+                   SELECT * FROM "category" WHERE username = ? AND name = ?
+                """,
             CategoryEntityRowMapper.instance,
             username,
             categoryName
@@ -81,7 +98,9 @@ public class CategoryDaoSpringJdbc implements CategoryDao {
   public List<CategoryEntity> findAllByUsername(String username) {
     JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(url));
     return jdbcTemplate.query(
-        "SELECT * FROM \"category\" WHERE username = ?",
+        """
+               SELECT * FROM "category" WHERE username = ?
+            """,
         CategoryEntityRowMapper.instance,
         username
     );
@@ -91,7 +110,9 @@ public class CategoryDaoSpringJdbc implements CategoryDao {
   public void delete(CategoryEntity category) {
     JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(url));
     jdbcTemplate.queryForObject(
-        "DELETE FROM \"category\" WHERE id = ?",
+        """
+               DELETE * FROM "category" WHERE id = ?
+            """,
         CategoryEntityRowMapper.instance,
         category.getId()
     );
@@ -101,7 +122,9 @@ public class CategoryDaoSpringJdbc implements CategoryDao {
   public List<CategoryEntity> findAll() {
     JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(url));
     return jdbcTemplate.query(
-        "SELECT * FROM \"category\"",
+        """
+               SELECT * FROM "category"
+            """,
         CategoryEntityRowMapper.instance
     );
   }

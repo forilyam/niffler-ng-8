@@ -19,35 +19,44 @@ public class AuthUserEntityExtractor implements ResultSetExtractor<AuthUserEntit
   private AuthUserEntityExtractor() {
   }
 
+  /**
+   * SELECT a.id as authority_id,
+   * authority,
+   * user_id as id,
+   * u.username,
+   * u.password,
+   * u.enabled,
+   * u.account_non_expired,
+   * u.account_non_locked,
+   * u.credentials_non_expired
+   * FROM "user" u join authority a on u.id = a.user_id WHERE u.id = ?
+   */
   @Override
   public AuthUserEntity extractData(ResultSet rs) throws SQLException, DataAccessException {
-    Map<UUID, AuthUserEntity> userMap = new ConcurrentHashMap<>();
+    Map<UUID, AuthUserEntity> userCache = new ConcurrentHashMap<>();
+
     UUID userId = null;
     while (rs.next()) {
       userId = rs.getObject("id", UUID.class);
-      AuthUserEntity user = userMap.computeIfAbsent(userId, id -> {
-        AuthUserEntity newUser = new AuthUserEntity();
-        try {
-          newUser.setId(id);
-          newUser.setUsername(rs.getString("username"));
-          newUser.setPassword(rs.getString("password"));
-          newUser.setEnabled(rs.getBoolean("enabled"));
-          newUser.setAccountNonExpired(rs.getBoolean("account_non_expired"));
-          newUser.setAccountNonLocked(rs.getBoolean("account_non_locked"));
-          newUser.setCredentialsNonExpired(rs.getBoolean("credentials_non_expired"));
-          newUser.setAuthorities(new ArrayList<>());
-        } catch (SQLException e) {
-          throw new RuntimeException(e);
-        }
-        return newUser;
-      });
 
-      AuthorityEntity authority = new AuthorityEntity();
-      authority.setId(rs.getObject("authority_id", UUID.class));
+      AuthUserEntity user = userCache.get(userId);
+      if (user == null) {
+        AuthUserEntity newUser = new AuthUserEntity();
+        newUser.setId(userId);
+        newUser.setUsername(rs.getString("username"));
+        newUser.setPassword(rs.getString("password"));
+        newUser.setEnabled(rs.getBoolean("enabled"));
+        newUser.setAccountNonExpired(rs.getBoolean("account_non_expired"));
+        newUser.setAccountNonLocked(rs.getBoolean("account_non_locked"));
+        newUser.setCredentialsNonExpired(rs.getBoolean("credentials_non_expired"));
+        userCache.put(userId, newUser);
+        user = newUser;
+      }
+
+      AuthorityEntity authority = new AuthorityEntity(rs.getObject("authority_id", UUID.class));
       authority.setAuthority(Authority.valueOf(rs.getString("authority")));
-      authority.setUser(user);
-      user.getAuthorities().add(authority);
+      user.addAuthorities(authority);
     }
-    return userMap.get(userId);
+    return userId != null ? userCache.get(userId) : null;
   }
 }

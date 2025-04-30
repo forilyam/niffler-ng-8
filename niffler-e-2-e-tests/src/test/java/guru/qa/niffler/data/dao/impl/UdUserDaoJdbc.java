@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static guru.qa.niffler.data.tpl.Connections.holder;
+import static guru.qa.niffler.data.jdbc.Connections.holder;
 
 public class UdUserDaoJdbc implements UdUserDao {
 
@@ -54,11 +54,23 @@ public class UdUserDaoJdbc implements UdUserDao {
   @Override
   public UserEntity update(UserEntity user) {
     try (PreparedStatement usersPs = holder(url).connection().prepareStatement(
-        "UPDATE \"user\" SET currency = ?, firstname = ?, surname = ?, photo = ?, photo_small = ? " +
-            "WHERE id = ?");
+        """
+              UPDATE "user"
+                SET currency    = ?,
+                    firstname   = ?,
+                    surname     = ?,
+                    photo       = ?,
+                    photo_small = ?
+                WHERE id = ?
+            """);
+
          PreparedStatement friendsPs = holder(url).connection().prepareStatement(
-             "INSERT INTO friendship (requester_id, addressee_id, status) VALUES (?, ?, ?) " +
-                 "ON CONFLICT (requester_id, addressee_id) DO UPDATE SET status = ?")
+             """
+                 INSERT INTO friendship (requester_id, addressee_id, status)
+                 VALUES (?, ?, ?)
+                 ON CONFLICT (requester_id, addressee_id)
+                     DO UPDATE SET status = ?
+                 """)
     ) {
       usersPs.setString(1, user.getCurrency().name());
       usersPs.setString(2, user.getFirstname());
