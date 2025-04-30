@@ -15,9 +15,11 @@ public class MainPage {
   private final SelenideElement profileBtn = $x("//*[@data-testid='PersonIcon']");
   private final SelenideElement profileLink = $("a[href='/profile']");
   private final SelenideElement friendsLink = $("a[href='/people/friends']");
-
+  private final SelenideElement searchInput = $("input");
 
   public EditSpendingPage editSpending(String spendingDescription) {
+    searchInput.setValue(spendingDescription).pressEnter();
+
     tableRows.find(text(spendingDescription))
         .$$("td")
         .get(5)

@@ -14,6 +14,7 @@ public class FriendsPage {
   private final SelenideElement friendsTab = $("#simple-tabpanel-friends");
   private final SelenideElement requestsTable = $("#requests");
   private final SelenideElement allTable = $("#all");
+  private final SelenideElement searchInput = $("input");
 
   public FriendsPage checkThatFriendsPageLoaded() {
     peopleTab.shouldBe(visible);
@@ -22,7 +23,10 @@ public class FriendsPage {
   }
 
   public void checkExistingFriends(String... existingFriends) {
-    friendsTable.$$("tr").shouldHave(textsInAnyOrder(existingFriends));
+    for (String friend : existingFriends) {
+      searchInput.setValue(friend).pressEnter();
+      friendsTable.$$("tr").shouldHave(textsInAnyOrder(existingFriends));
+    }
   }
 
   public void checkFriendsTableIsEmpty() {
@@ -31,6 +35,7 @@ public class FriendsPage {
   }
 
   public void checkIncomeInvitation(String incomeUsername) {
+    searchInput.setValue(incomeUsername).pressEnter();
     requestsTable.$$("tr").shouldHave(textsInAnyOrder(incomeUsername));
   }
 
@@ -41,6 +46,7 @@ public class FriendsPage {
   }
 
   public void checkOutcomeInvitation(String outcomeUsername) {
+    searchInput.setValue(outcomeUsername).pressEnter();
     allTable.$("tr").shouldHave(text(outcomeUsername));
     allTable.$$("tr").find(text(outcomeUsername)).shouldHave(text("Waiting..."));
   }
