@@ -4,7 +4,7 @@ import guru.qa.niffler.config.Config;
 import guru.qa.niffler.data.dao.AuthAuthorityDao;
 import guru.qa.niffler.data.entity.auth.AuthorityEntity;
 import guru.qa.niffler.data.mapper.AuthorityEntityRowMapper;
-import guru.qa.niffler.data.tpl.DataSources;
+import guru.qa.niffler.data.jdbc.DataSources;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 
@@ -22,7 +22,10 @@ public class AuthAuthorityDaoSpringJdbc implements AuthAuthorityDao {
   public void create(AuthorityEntity... authority) {
     JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(url));
     jdbcTemplate.batchUpdate(
-        "INSERT INTO authority (user_id, authority) VALUES (? , ?)",
+        """
+                INSERT INTO authority (user_id, authority)
+                VALUES (?, ?)
+            """,
         new BatchPreparedStatementSetter() {
           @Override
           public void setValues(PreparedStatement ps, int i) throws SQLException {
@@ -42,7 +45,9 @@ public class AuthAuthorityDaoSpringJdbc implements AuthAuthorityDao {
   public List<AuthorityEntity> findAll() {
     JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(url));
     return jdbcTemplate.query(
-        "SELECT * FROM \"authority\"",
+        """
+               SELECT * FROM "authority"
+            """,
         AuthorityEntityRowMapper.instance
     );
   }
@@ -51,7 +56,9 @@ public class AuthAuthorityDaoSpringJdbc implements AuthAuthorityDao {
   public List<AuthorityEntity> findAllByUserId(UUID userId) {
     JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(url));
     return jdbcTemplate.query(
-        "SELECT * FROM authority where user_id = ?",
+        """
+               SELECT * FROM "authority" WHERE user_id = ?
+            """,
         AuthorityEntityRowMapper.instance,
         userId
     );
