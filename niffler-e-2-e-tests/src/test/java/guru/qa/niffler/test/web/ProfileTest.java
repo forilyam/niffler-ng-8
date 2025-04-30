@@ -6,6 +6,7 @@ import guru.qa.niffler.jupiter.annotation.Category;
 import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.jupiter.extension.BrowserExtension;
 import guru.qa.niffler.model.CategoryJson;
+import guru.qa.niffler.model.UserJson;
 import guru.qa.niffler.page.LoginPage;
 import guru.qa.niffler.page.ProfilePage;
 import org.junit.jupiter.api.Test;
@@ -23,16 +24,17 @@ public class ProfileTest {
       )
   )
   @Test
-  void archiveCategory(CategoryJson category) {
+  void archiveCategory(UserJson user) {
     ProfilePage profilePage =
         Selenide.open(CFG.frontUrl(), LoginPage.class)
-            .doLogin("Ilya", "12345")
+            .doLogin(user.username(), user.testData().password())
             .goToProfile();
 
+    String categoryName = user.testData().categories().getFirst().name();
     profilePage
-        .categoriesShouldHaveLabel(category.name())
-        .archiveCategory(category.name())
-        .checkArchivedCategoryExists(category.name());
+        .categoriesShouldHaveLabel(categoryName)
+        .archiveCategory(categoryName)
+        .checkArchivedCategoryExists(categoryName);
   }
 
   @User(
