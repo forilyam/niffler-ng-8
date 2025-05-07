@@ -3,12 +3,10 @@ package guru.qa.niffler.jupiter.extension;
 import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.model.UserJson;
 import guru.qa.niffler.service.UsersClient;
-import guru.qa.niffler.service.UsersDbClient;
+import guru.qa.niffler.service.impl.UsersDbClient;
 import guru.qa.niffler.utils.RandomDataUtils;
 import org.junit.jupiter.api.extension.*;
 import org.junit.platform.commons.support.AnnotationSupport;
-
-import javax.annotation.Nullable;
 
 public class UserExtension implements
     BeforeEachCallback,
@@ -30,11 +28,13 @@ public class UserExtension implements
                 username,
                 defaultPassword
             );
+            usersClient.createIncomeInvitations(user, userAnno.incomeInvitations());
+            usersClient.createOutcomeInvitations(user, userAnno.outcomeInvitations());
+            usersClient.createFriends(user, userAnno.friends());
+
             context.getStore(NAMESPACE).put(
                 context.getUniqueId(),
-                user.withPassword(
-                    defaultPassword
-                )
+                user
             );
           }
         });
@@ -50,7 +50,7 @@ public class UserExtension implements
     return createdUser();
   }
 
-  public static @Nullable UserJson createdUser() {
+  public static UserJson createdUser() {
     final ExtensionContext context = TestsMethodContextExtension.context();
     return context.getStore(NAMESPACE).get(context.getUniqueId(), UserJson.class);
   }

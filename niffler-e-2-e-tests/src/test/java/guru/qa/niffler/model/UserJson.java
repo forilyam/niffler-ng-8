@@ -51,12 +51,15 @@ public record UserJson(
     );
   }
 
-  public UserJson withPassword(String paasword) {
+  public UserJson withPassword(String password) {
     return withTestData(
         new TestData(
-            paasword,
+            password,
             testData.categories(),
-            testData.spendings()
+            testData.spendings(),
+            testData.friends(),
+            testData.incomeInvitations(),
+            testData.outcomeInvitations()
         )
     );
   }

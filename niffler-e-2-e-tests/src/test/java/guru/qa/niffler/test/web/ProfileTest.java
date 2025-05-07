@@ -5,7 +5,6 @@ import guru.qa.niffler.config.Config;
 import guru.qa.niffler.jupiter.annotation.Category;
 import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.jupiter.extension.BrowserExtension;
-import guru.qa.niffler.model.CategoryJson;
 import guru.qa.niffler.model.UserJson;
 import guru.qa.niffler.page.LoginPage;
 import guru.qa.niffler.page.ProfilePage;
@@ -18,7 +17,6 @@ public class ProfileTest {
   private static final Config CFG = Config.getInstance();
 
   @User(
-      username = "Ilya",
       categories = @Category(
           archived = false
       )
@@ -38,23 +36,23 @@ public class ProfileTest {
   }
 
   @User(
-      username = "Ilya",
       categories = @Category(
           archived = true
       )
   )
   @Test
-  void unArchiveCategory(CategoryJson category) {
+  void unArchiveCategory(UserJson user) {
     ProfilePage profilePage =
         Selenide.open(CFG.frontUrl(), LoginPage.class)
-            .doLogin("Ilya", "12345")
+            .doLogin(user.username(), user.testData().password())
             .goToProfile();
 
+    String categoryName = user.testData().categories().getFirst().name();
     profilePage
         .showArchivedCategories()
-        .categoriesShouldHaveLabel(category.name())
-        .unArchiveCategory(category.name())
-        .checkCategoryExists(category.name());
+        .categoriesShouldHaveLabel(categoryName)
+        .unArchiveCategory(categoryName)
+        .checkCategoryExists(categoryName);
   }
 
 }
