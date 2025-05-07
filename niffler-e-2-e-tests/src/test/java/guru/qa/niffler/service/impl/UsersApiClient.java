@@ -38,7 +38,8 @@ public class UsersApiClient implements UsersClient {
       authApi.register(
           username,
           password,
-          password
+          password,
+          null
       ).execute();
       UserJson createdUser = requireNonNull(userdataApi.currentUser(username).execute().body());
       return createdUser.withPassword(

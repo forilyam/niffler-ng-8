@@ -81,23 +81,23 @@ public class SpendApiClient implements SpendClient {
 
   @Override
   public Optional<CategoryJson> findCategoryById(UUID id) {
-    throw new UnsupportedOperationException("Can`t find category by id");
+    throw new UnsupportedOperationException("Method 'findCategoryById' is not implemented");
   }
 
   @Override
   public Optional<CategoryJson> findCategoryByUsernameAndCategoryName(String username, String name) {
-    throw new UnsupportedOperationException("Can`t find category by username and category name");
+    throw new UnsupportedOperationException("Method 'findCategoryByUsernameAndCategoryName' is not implemented");
   }
 
   @Override
   public Optional<SpendJson> findById(UUID id) {
-    throw new UnsupportedOperationException("Can`t find spend by id");
+    throw new UnsupportedOperationException("Method 'findById' is not implemented");
 
   }
 
   @Override
   public Optional<SpendJson> findByUsernameAndSpendDescription(String username, String description) {
-    throw new UnsupportedOperationException("Can`t find spend by username and description");
+    throw new UnsupportedOperationException("Method 'findByUsernameAndSpendDescription' is not implemented");
   }
 
   @Override
@@ -114,6 +114,6 @@ public class SpendApiClient implements SpendClient {
 
   @Override
   public void removeCategory(CategoryJson category) {
-    throw new UnsupportedOperationException("Can`t remove category");
+    throw new UnsupportedOperationException("Method 'removeCategory' is not implemented");
   }
 }

@@ -10,7 +10,8 @@ public interface AuthApi {
   @POST("login")
   Call<Void> login(
       @Field("username") String username,
-      @Field("password") String password);
+      @Field("password") String password,
+      @Field("_csrf") String csrf);
 
   @GET("register")
   Call<Void> getRegisterPage();
@@ -19,5 +20,6 @@ public interface AuthApi {
   Call<Void> register(
       @Field("username") String username,
       @Field("password") String password,
-      @Field("passwordSubmit") String passwordSubmit);
+      @Field("passwordSubmit") String passwordSubmit,
+      @Field("_csrf") String csrf);
 }
