@@ -51,7 +51,7 @@ public class UserExtension implements
   }
 
   public static UserJson createdUser() {
-    final ExtensionContext context = TestsMethodContextExtension.context();
+    final ExtensionContext context = TestMethodContextExtension.context();
     return context.getStore(NAMESPACE).get(context.getUniqueId(), UserJson.class);
   }
 }
