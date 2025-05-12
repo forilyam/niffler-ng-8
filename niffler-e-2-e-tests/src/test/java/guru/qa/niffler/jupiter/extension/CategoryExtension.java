@@ -15,7 +15,9 @@ import org.junit.jupiter.api.extension.ParameterResolver;
 import org.junit.platform.commons.support.AnnotationSupport;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static guru.qa.niffler.utils.RandomDataUtils.randomCategoryName;
 
@@ -76,5 +78,11 @@ public class CategoryExtension implements
     return (CategoryJson[]) extensionContext.getStore(NAMESPACE).get(extensionContext.getUniqueId(), List.class)
         .stream()
         .toArray(CategoryJson[]::new);
+  }
+
+  @SuppressWarnings("unchecked")
+  public static List<CategoryJson> createdCategories(ExtensionContext extensionContext) {
+    return Optional.ofNullable(extensionContext.getStore(NAMESPACE).get(extensionContext.getUniqueId(), List.class))
+        .orElse(Collections.emptyList());
   }
 }

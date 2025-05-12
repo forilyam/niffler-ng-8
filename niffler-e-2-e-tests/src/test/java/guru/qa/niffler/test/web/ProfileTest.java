@@ -3,6 +3,7 @@ package guru.qa.niffler.test.web;
 import com.codeborne.selenide.Selenide;
 import guru.qa.niffler.config.Config;
 import guru.qa.niffler.jupiter.annotation.Category;
+import guru.qa.niffler.jupiter.annotation.ScreenShotTest;
 import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.jupiter.extension.BrowserExtension;
 import guru.qa.niffler.model.UserJson;
@@ -10,6 +11,9 @@ import guru.qa.niffler.page.LoginPage;
 import guru.qa.niffler.page.ProfilePage;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 
 @ExtendWith(BrowserExtension.class)
 public class ProfileTest {
@@ -55,4 +59,13 @@ public class ProfileTest {
         .checkCategoryExists(categoryName);
   }
 
+  @User
+  @ScreenShotTest(value = "img/expected-avatar.png")
+  void checkProfileImageTest(UserJson user, BufferedImage expectedProfileImage) throws IOException {
+    Selenide.open(CFG.frontUrl(), LoginPage.class)
+        .doLogin(user.username(), user.testData().password())
+        .goToProfile()
+        .uploadAvatarFromClasspath("img/avatar.png")
+        .checkAvatarPicture(expectedProfileImage);
+  }
 }
