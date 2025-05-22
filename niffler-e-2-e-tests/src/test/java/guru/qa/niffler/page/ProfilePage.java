@@ -1,12 +1,20 @@
 package guru.qa.niffler.page;
 
 import com.codeborne.selenide.ElementsCollection;
+import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
 import com.codeborne.selenide.collections.AnyMatch;
+import guru.qa.niffler.utils.ScreenDiffResult;
+
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.util.Objects;
 
 import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class ProfilePage {
 
@@ -22,6 +30,8 @@ public class ProfilePage {
   private final ElementsCollection bubbles = $$(".MuiChip-filled.MuiChip-colorPrimary");
   private final ElementsCollection bubblesArchived = $$(".MuiChip-filled.MuiChip-colorDefault");
 
+  private final SelenideElement pictureInput = $("input[type='file']");
+  private final SelenideElement avatar = $(".MuiAvatar-img");
 
   public ProfilePage categoriesShouldHaveLabel(String categoryName) {
     categoryLabels.shouldHave(new AnyMatch(
@@ -57,9 +67,6 @@ public class ProfilePage {
     return this;
   }
 
-
-
-
   public ProfilePage checkCategoryExists(String category) {
     bubbles.find(text(category)).shouldBe(visible);
     return this;
@@ -68,6 +75,22 @@ public class ProfilePage {
   public ProfilePage checkArchivedCategoryExists(String category) {
     archivedSwitcher.click();
     bubblesArchived.find(text(category)).shouldBe(visible);
+    return this;
+  }
+
+  public ProfilePage uploadAvatarFromClasspath(String path) {
+    pictureInput.uploadFromClasspath(path);
+    return this;
+  }
+
+  public ProfilePage checkAvatarPicture(BufferedImage expected) throws IOException {
+    Selenide.sleep(1000);
+    BufferedImage actualImage = ImageIO.read(Objects.requireNonNull(avatar.screenshot()));
+    assertFalse(
+        new ScreenDiffResult(
+            actualImage, expected
+        )
+    );
     return this;
   }
 }

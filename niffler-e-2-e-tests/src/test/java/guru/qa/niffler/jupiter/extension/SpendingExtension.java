@@ -8,16 +8,13 @@ import guru.qa.niffler.model.UserJson;
 import guru.qa.niffler.service.SpendClient;
 import guru.qa.niffler.service.impl.SpendDbClient;
 import org.apache.commons.lang3.ArrayUtils;
-import org.junit.jupiter.api.extension.BeforeEachCallback;
-import org.junit.jupiter.api.extension.ExtensionContext;
-import org.junit.jupiter.api.extension.ParameterContext;
-import org.junit.jupiter.api.extension.ParameterResolutionException;
-import org.junit.jupiter.api.extension.ParameterResolver;
+import org.junit.jupiter.api.extension.*;
 import org.junit.platform.commons.support.AnnotationSupport;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 public class SpendingExtension implements BeforeEachCallback, ParameterResolver {
 
@@ -30,23 +27,31 @@ public class SpendingExtension implements BeforeEachCallback, ParameterResolver 
     AnnotationSupport.findAnnotation(context.getRequiredTestMethod(), User.class)
         .ifPresent(userAnno -> {
           if (ArrayUtils.isNotEmpty(userAnno.spendings())) {
-            UserJson createdUser = UserExtension.createdUser();
+            final UserJson createdUser = UserExtension.createdUser();
             final String username = createdUser != null
                 ? createdUser.username()
                 : userAnno.username();
 
+            final List<CategoryJson> existingCategories = createdUser != null
+                ? createdUser.testData().categories()
+                : CategoryExtension.createdCategories(context);
+
             final List<SpendJson> createdSpendings = new ArrayList<>();
 
             for (Spending spendAnno : userAnno.spendings()) {
+              final Optional<CategoryJson> matchedCategory = existingCategories.stream()
+                  .filter(cat -> cat.name().equals(spendAnno.category()))
+                  .findFirst();
+
               SpendJson spend = new SpendJson(
                   null,
                   new Date(),
-                  new CategoryJson(
+                  matchedCategory.orElseGet(() -> new CategoryJson(
                       null,
                       spendAnno.category(),
                       username,
                       false
-                  ),
+                  )),
                   spendAnno.currency(),
                   spendAnno.amount(),
                   spendAnno.description(),
