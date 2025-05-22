@@ -9,6 +9,7 @@ import okhttp3.OkHttpClient;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
+import io.qameta.allure.okhttp3.AllureOkHttp3;
 
 import java.io.IOException;
 
@@ -21,7 +22,12 @@ public class UsersApiClient implements UsersClient {
   private static final Config CFG = Config.getInstance();
   private static final String defaultPassword = "12345";
 
-  private final OkHttpClient client = new OkHttpClient.Builder().build();
+  private final OkHttpClient client = new OkHttpClient.Builder().addNetworkInterceptor(
+      new AllureOkHttp3()
+          .setRequestTemplate("http-request.ftl")
+          .setResponseTemplate("http-response.ftl")
+  ).build();
+
   private final Retrofit retrofit = new Retrofit.Builder()
       .baseUrl(CFG.spendUrl())
       .client(client)
