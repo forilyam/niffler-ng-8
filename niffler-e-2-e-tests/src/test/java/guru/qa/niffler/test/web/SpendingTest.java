@@ -53,7 +53,8 @@ public class SpendingTest {
   void checkStatComponentTest(UserJson user, BufferedImage expected) throws IOException {
     Selenide.open(CFG.frontUrl(), LoginPage.class)
         .doLogin(user.username(), user.testData().password())
-        .checkStatisticContains("Обучение 79990 ₽")
+        .getStatComponent()
+        .checkStatisticBubblesContains("Обучение 79990 ₽")
         .checkStatisticImage(expected);
   }
 
@@ -72,7 +73,8 @@ public class SpendingTest {
         .doLogin(user.username(), user.testData().password())
         .editSpending(user.testData().spendings().getFirst().description())
         .editSpendingAmount("95")
-        .checkStatisticContains("Продукты 95 ₽")
+        .getStatComponent()
+        .checkStatisticBubblesContains("Продукты 95 ₽")
         .checkStatisticImage(expected);
   }
 
@@ -88,6 +90,7 @@ public class SpendingTest {
     Selenide.open(CFG.frontUrl(), LoginPage.class)
         .doLogin(user.username(), user.testData().password())
         .deleteSpending(user.testData().spendings().getFirst().description())
+        .getStatComponent()
         .checkStatisticImage(expected);
   }
 
@@ -119,7 +122,8 @@ public class SpendingTest {
   void checkStatComponentArchivedCategoriesTest(UserJson user, BufferedImage expected) throws IOException {
     Selenide.open(CFG.frontUrl(), LoginPage.class)
         .doLogin(user.username(), user.testData().password())
-        .checkStatisticContains("Одежда 5000 ₽", "Archived 3800 ₽")
+        .getStatComponent()
+        .checkStatisticBubblesContains("Одежда 5000 ₽", "Archived 3800 ₽")
         .checkStatisticImage(expected);
   }
 }
