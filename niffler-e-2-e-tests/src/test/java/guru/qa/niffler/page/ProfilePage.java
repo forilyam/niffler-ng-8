@@ -9,11 +9,11 @@ import guru.qa.niffler.utils.ScreenDiffResult;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.Objects;
 
 import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.*;
+import static java.util.Objects.requireNonNull;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class ProfilePage {
@@ -31,7 +31,7 @@ public class ProfilePage {
   private final ElementsCollection bubblesArchived = $$(".MuiChip-filled.MuiChip-colorDefault");
 
   private final SelenideElement pictureInput = $("input[type='file']");
-  private final SelenideElement avatar = $(".MuiAvatar-img");
+  private final SelenideElement avatar = $("#image__input").parent().$("img");
 
   public ProfilePage categoriesShouldHaveLabel(String categoryName) {
     categoryLabels.shouldHave(new AnyMatch(
@@ -85,12 +85,15 @@ public class ProfilePage {
 
   public ProfilePage checkAvatarPicture(BufferedImage expected) throws IOException {
     Selenide.sleep(1000);
-    BufferedImage actualImage = ImageIO.read(Objects.requireNonNull(avatar.screenshot()));
     assertFalse(
         new ScreenDiffResult(
-            actualImage, expected
+            avatarScreenshot(), expected
         )
     );
     return this;
+  }
+
+  public BufferedImage avatarScreenshot() throws IOException {
+    return ImageIO.read(requireNonNull(avatar.screenshot()));
   }
 }
