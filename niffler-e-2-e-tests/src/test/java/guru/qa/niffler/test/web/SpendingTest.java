@@ -1,13 +1,16 @@
 package guru.qa.niffler.test.web;
 
 import com.codeborne.selenide.Selenide;
+import guru.qa.niffler.condition.Color;
 import guru.qa.niffler.config.Config;
 import guru.qa.niffler.jupiter.annotation.Category;
 import guru.qa.niffler.jupiter.annotation.ScreenShotTest;
 import guru.qa.niffler.jupiter.annotation.Spending;
 import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.jupiter.extension.BrowserExtension;
+import guru.qa.niffler.model.Bubble;
 import guru.qa.niffler.model.CurrencyValues;
+import guru.qa.niffler.model.SpendJson;
 import guru.qa.niffler.model.UserJson;
 import guru.qa.niffler.page.LoginPage;
 import guru.qa.niffler.page.MainPage;
@@ -43,19 +46,50 @@ public class SpendingTest {
   }
 
   @User(
-      spendings = @Spending(
-          category = "Обучение",
-          description = "Обучение Advanced 2.0",
-          amount = 79990
-      )
+      spendings = {
+          @Spending(
+              category = "Обучение",
+              description = "Обучение Advanced 2.0",
+              amount = 79990
+          ),
+          @Spending(
+              category = "Техника",
+              description = "Телевизор",
+              amount = 95000.00,
+              currency = CurrencyValues.RUB
+          )}
   )
   @ScreenShotTest(value = "img/expected-stat.png")
   void checkStatComponentTest(UserJson user, BufferedImage expected) throws IOException {
     Selenide.open(CFG.frontUrl(), LoginPage.class)
         .doLogin(user.username(), user.testData().password())
         .getStatComponent()
-        .checkStatisticBubblesContains("Обучение 79990 ₽")
-        .checkStatisticImage(expected);
+        .checkStatisticImage(expected)
+        .checkStatBubblesInAnyOrder(
+            new Bubble(Color.green, "Обучение 79990 ₽"),
+            new Bubble(Color.yellow, "Техника 95000 ₽"));
+  }
+
+  @User(
+      spendings = {
+          @Spending(
+              category = "Обучение",
+              description = "Обучение Advanced 2.0",
+              amount = 79990
+          ),
+          @Spending(
+              category = "Техника",
+              description = "Телевизор",
+              amount = 95000.00,
+              currency = CurrencyValues.RUB
+          )}
+  )
+  @Test
+  void checkSpendingTableTest(UserJson user) {
+    Selenide.open(CFG.frontUrl(), LoginPage.class)
+        .doLogin(user.username(), user.testData().password())
+        .getStatComponent()
+        .checkSpendTable(user.testData().spendings().toArray(SpendJson[]::new));
   }
 
   @User(

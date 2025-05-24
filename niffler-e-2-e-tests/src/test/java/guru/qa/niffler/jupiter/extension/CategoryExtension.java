@@ -7,11 +7,7 @@ import guru.qa.niffler.model.UserJson;
 import guru.qa.niffler.service.SpendClient;
 import guru.qa.niffler.service.impl.SpendDbClient;
 import org.apache.commons.lang3.ArrayUtils;
-import org.junit.jupiter.api.extension.BeforeEachCallback;
-import org.junit.jupiter.api.extension.ExtensionContext;
-import org.junit.jupiter.api.extension.ParameterContext;
-import org.junit.jupiter.api.extension.ParameterResolutionException;
-import org.junit.jupiter.api.extension.ParameterResolver;
+import org.junit.jupiter.api.extension.*;
 import org.junit.platform.commons.support.AnnotationSupport;
 
 import java.util.ArrayList;
@@ -75,14 +71,13 @@ public class CategoryExtension implements
   @Override
   @SuppressWarnings("unchecked")
   public CategoryJson[] resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
-    return (CategoryJson[]) extensionContext.getStore(NAMESPACE).get(extensionContext.getUniqueId(), List.class)
-        .stream()
-        .toArray(CategoryJson[]::new);
+    return createdCategories().toArray(CategoryJson[]::new);
   }
 
   @SuppressWarnings("unchecked")
-  public static List<CategoryJson> createdCategories(ExtensionContext extensionContext) {
-    return Optional.ofNullable(extensionContext.getStore(NAMESPACE).get(extensionContext.getUniqueId(), List.class))
+  public static List<CategoryJson> createdCategories() {
+    final ExtensionContext context = TestMethodContextExtension.context();
+    return Optional.ofNullable(context.getStore(NAMESPACE).get(context.getUniqueId(), List.class))
         .orElse(Collections.emptyList());
   }
 }

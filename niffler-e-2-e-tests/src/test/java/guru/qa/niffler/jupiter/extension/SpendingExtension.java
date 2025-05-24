@@ -34,7 +34,7 @@ public class SpendingExtension implements BeforeEachCallback, ParameterResolver 
 
             final List<CategoryJson> existingCategories = createdUser != null
                 ? createdUser.testData().categories()
-                : CategoryExtension.createdCategories(context);
+                : CategoryExtension.createdCategories();
 
             final List<SpendJson> createdSpendings = new ArrayList<>();
 
