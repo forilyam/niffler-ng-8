@@ -88,7 +88,6 @@ public class SpendingTest {
   void checkSpendingTableTest(UserJson user) {
     Selenide.open(CFG.frontUrl(), LoginPage.class)
         .doLogin(user.username(), user.testData().password())
-        .getStatComponent()
         .checkSpendTable(user.testData().spendings().toArray(SpendJson[]::new));
   }
 

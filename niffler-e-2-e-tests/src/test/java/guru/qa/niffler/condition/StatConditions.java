@@ -112,11 +112,13 @@ public class StatConditions {
         }
 
         if (!passed) {
-          final String message = "Bubbles mismatch";
           StringBuilder actualValuesMessage = new StringBuilder();
           for (int i = 0; i < actualBubbleColor.size(); i++) {
             actualValuesMessage.append(("Bubble: {color = %s, text = %s}, ").formatted(actualBubbleColor.get(i), actualBubbleText.get(i)));
           }
+          final String message = String.format(
+              "Bubbles mismatch (expected: %s, actual: %s)", Arrays.toString(expectedBubbles), actualValuesMessage
+          );
           return rejected(message, actualValuesMessage);
         }
         return accepted();
@@ -158,11 +160,13 @@ public class StatConditions {
         }
 
         if (!passed) {
-          String message = "Bubbles mismatch";
           StringBuilder actualValuesMessage = new StringBuilder();
           for (Map.Entry<String, String> entry : actualBubblesMap.entrySet()) {
             actualValuesMessage.append(("Bubble: {color = %s, text = %s}, ").formatted(entry.getKey(), entry.getValue()));
           }
+          final String message = String.format(
+              "Bubbles mismatch (expected: %s, actual: %s)", Arrays.toString(expectedBubbles), actualValuesMessage
+          );
           return rejected(message, actualValuesMessage);
         }
         return accepted();
@@ -202,11 +206,13 @@ public class StatConditions {
         }
 
         if (!passed) {
-          String message = "Bubbles mismatch";
           StringBuilder actualValuesMessage = new StringBuilder();
           for (Map.Entry<String, String> entry : actualBubblesMap.entrySet()) {
             actualValuesMessage.append(("Bubble: {color = %s, text = %s}, ").formatted(entry.getKey(), entry.getValue()));
           }
+          final String message = String.format(
+              "Bubbles mismatch (expected: %s, actual: %s)", Arrays.toString(expectedBubbles), actualValuesMessage
+          );
           return rejected(message, actualValuesMessage);
         }
         return accepted();

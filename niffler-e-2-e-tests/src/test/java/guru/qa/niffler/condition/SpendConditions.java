@@ -4,6 +4,7 @@ import com.codeborne.selenide.CheckResult;
 import com.codeborne.selenide.Driver;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.WebElementsCondition;
+import guru.qa.niffler.model.CurrencyValues;
 import guru.qa.niffler.model.SpendJson;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
@@ -12,7 +13,9 @@ import org.openqa.selenium.WebElement;
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 
 import static com.codeborne.selenide.CheckResult.accepted;
 import static com.codeborne.selenide.CheckResult.rejected;
@@ -46,7 +49,9 @@ public class SpendConditions {
                 .formatted(expectedSpends[i].category().name(), cell.get(1).getText());
             return rejected(messageFail, message);
           }
-          if (!(expectedSpends[i].amount().intValue() + " ₽").equals(cell.get(2).getText())) {
+          String[] amountWithCurrency = cell.get(2).getText().split(" ");
+          CurrencyValues currency = CurrencyValues.fromSymbol(amountWithCurrency[1]);
+          if (!(expectedSpends[i].amount().intValue() + currency.getSymbol()).equals(cell.get(2).getText())) {
             String messageFail = "Spend amount mismatch";
             String message = "Spend amount mismatch (expected: %s, actual: %s)"
                 .formatted(expectedSpends[i].amount(), cell.get(2).getText());
@@ -70,7 +75,7 @@ public class SpendConditions {
 
       @Override
       public String toString() {
-        return "";
+        return expectedSpends.toString();
       }
     };
   }

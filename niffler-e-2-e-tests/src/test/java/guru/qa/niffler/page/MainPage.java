@@ -2,12 +2,14 @@ package guru.qa.niffler.page;
 
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
+import guru.qa.niffler.model.SpendJson;
 import guru.qa.niffler.page.component.StatComponent;
 
 import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.*;
+import static guru.qa.niffler.condition.SpendConditions.spends;
 
 public class MainPage {
 
@@ -45,7 +47,8 @@ public class MainPage {
   }
 
   public void checkThatMainPageIsLoaded() {
-    statComponent.self.shouldBe(visible).shouldHave(text("Statistics"));;
+    statComponent.self.shouldBe(visible).shouldHave(text("Statistics"));
+    ;
     spendings.shouldBe(visible).shouldHave(text("History of Spendings"));
   }
 
@@ -69,5 +72,10 @@ public class MainPage {
     deleteBtn.click();
     dialogWindow.$(byText("Delete")).click();
     return new MainPage();
+  }
+
+  public MainPage checkSpendTable(SpendJson... expectedSpends) {
+    tableRows.shouldHave(spends(expectedSpends));
+    return this;
   }
 }

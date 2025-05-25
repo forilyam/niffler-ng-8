@@ -7,7 +7,6 @@ import com.codeborne.selenide.SelenideElement;
 import guru.qa.niffler.condition.Color;
 import guru.qa.niffler.jupiter.extension.ScreenShotTestExtension;
 import guru.qa.niffler.model.Bubble;
-import guru.qa.niffler.model.SpendJson;
 import guru.qa.niffler.utils.ScreenDiffResult;
 
 import javax.imageio.ImageIO;
@@ -16,7 +15,6 @@ import java.io.IOException;
 
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
-import static guru.qa.niffler.condition.SpendConditions.spends;
 import static guru.qa.niffler.condition.StatConditions.*;
 import static java.util.Objects.requireNonNull;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -66,11 +64,6 @@ public class StatComponent {
 
   public StatComponent checkStatBubblesContains(Bubble... expectedBubbles) {
     bubbles.shouldHave(statBubblesContains(expectedBubbles));
-    return this;
-  }
-
-  public StatComponent checkSpendTable(SpendJson... expectedSpends) {
-    tableRows.shouldHave(spends(expectedSpends));
     return this;
   }
 }
