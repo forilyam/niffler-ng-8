@@ -5,7 +5,9 @@ import guru.qa.niffler.data.dao.AuthUserDao;
 import guru.qa.niffler.data.entity.auth.AuthUserEntity;
 import guru.qa.niffler.data.entity.auth.AuthorityEntity;
 import guru.qa.niffler.data.mapper.AuthUserEntityRowMapper;
+import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -16,11 +18,14 @@ import java.util.UUID;
 
 import static guru.qa.niffler.data.jdbc.Connections.holder;
 
+@ParametersAreNonnullByDefault
 public class AuthUserDaoJdbc implements AuthUserDao {
 
   private static final Config CFG = Config.getInstance();
   private final String url = CFG.authJdbcUrl();
 
+  @SuppressWarnings("resource")
+  @NotNull
   @Override
   public AuthUserEntity create(AuthUserEntity user) {
     try (PreparedStatement ps = holder(url).connection().prepareStatement(
@@ -50,6 +55,8 @@ public class AuthUserDaoJdbc implements AuthUserDao {
     }
   }
 
+  @SuppressWarnings("resource")
+  @NotNull
   @Override
   public AuthUserEntity update(AuthUserEntity user) {
     String updateUserSql = "UPDATE \"user\" SET password = ?, enabled = ?, " +
@@ -71,6 +78,7 @@ public class AuthUserDaoJdbc implements AuthUserDao {
     }
   }
 
+  @SuppressWarnings("resource")
   @Override
   public void updateUserAuthority(AuthUserEntity user) {
     String clearAuthoritySql = "DELETE FROM \"authority\" WHERE user_id = ?";
@@ -91,6 +99,8 @@ public class AuthUserDaoJdbc implements AuthUserDao {
     }
   }
 
+  @SuppressWarnings("resource")
+  @NotNull
   @Override
   public Optional<AuthUserEntity> findById(UUID id) {
     try (PreparedStatement ps = holder(url).connection().prepareStatement(
@@ -114,6 +124,8 @@ public class AuthUserDaoJdbc implements AuthUserDao {
     }
   }
 
+  @SuppressWarnings("resource")
+  @NotNull
   @Override
   public Optional<AuthUserEntity> findByUsername(String username) {
     try (PreparedStatement ps = holder(url).connection().prepareStatement(
@@ -137,6 +149,8 @@ public class AuthUserDaoJdbc implements AuthUserDao {
     }
   }
 
+  @SuppressWarnings("resource")
+  @NotNull
   @Override
   public List<AuthUserEntity> findAll() {
     try (PreparedStatement ps = holder(url).connection().prepareStatement(
@@ -157,6 +171,7 @@ public class AuthUserDaoJdbc implements AuthUserDao {
     }
   }
 
+  @SuppressWarnings("resource")
   @Override
   public void delete(AuthUserEntity user) {
     try (PreparedStatement userPs = holder(url).connection().prepareStatement(
