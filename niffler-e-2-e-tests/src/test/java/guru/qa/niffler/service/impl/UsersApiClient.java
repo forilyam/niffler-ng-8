@@ -5,18 +5,22 @@ import guru.qa.niffler.api.UserdataApi;
 import guru.qa.niffler.config.Config;
 import guru.qa.niffler.model.UserJson;
 import guru.qa.niffler.service.UsersClient;
+import io.qameta.allure.Step;
+import io.qameta.allure.okhttp3.AllureOkHttp3;
 import okhttp3.OkHttpClient;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
-import io.qameta.allure.okhttp3.AllureOkHttp3;
 
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.IOException;
 
 import static guru.qa.niffler.utils.RandomDataUtils.randomUsername;
 import static java.util.Objects.requireNonNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@ParametersAreNonnullByDefault
 public class UsersApiClient implements UsersClient {
 
   private static final Config CFG = Config.getInstance();
@@ -37,6 +41,8 @@ public class UsersApiClient implements UsersClient {
   private final AuthApi authApi = retrofit.create(AuthApi.class);
   private final UserdataApi userdataApi = retrofit.create(UserdataApi.class);
 
+  @Step("Create user with username '{0}' using REST API")
+  @Nonnull
   @Override
   public UserJson createUser(String username, String password) {
     try {
@@ -56,6 +62,7 @@ public class UsersApiClient implements UsersClient {
     }
   }
 
+  @Step("Create {1} income invitations for user using REST API")
   @Override
   public void createIncomeInvitations(UserJson targetUser, int count) {
     if (count > 0) {
@@ -78,6 +85,7 @@ public class UsersApiClient implements UsersClient {
     }
   }
 
+  @Step("Create {1} outcome invitations for user using REST API")
   @Override
   public void createOutcomeInvitations(UserJson targetUser, int count) {
     if (count > 0) {
@@ -100,6 +108,7 @@ public class UsersApiClient implements UsersClient {
     }
   }
 
+  @Step("Create {1} friends for user using REST API")
   @Override
   public void createFriends(UserJson targetUser, int count) {
     if (count > 0) {

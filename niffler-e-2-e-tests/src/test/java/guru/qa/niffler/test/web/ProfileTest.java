@@ -9,6 +9,7 @@ import guru.qa.niffler.jupiter.extension.BrowserExtension;
 import guru.qa.niffler.model.UserJson;
 import guru.qa.niffler.page.LoginPage;
 import guru.qa.niffler.page.ProfilePage;
+import guru.qa.niffler.utils.RandomDataUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -30,7 +31,8 @@ public class ProfileTest {
     ProfilePage profilePage =
         Selenide.open(CFG.frontUrl(), LoginPage.class)
             .doLogin(user.username(), user.testData().password())
-            .goToProfile();
+            .getHeader()
+            .toProfilePage();
 
     String categoryName = user.testData().categories().getFirst().name();
     profilePage
@@ -49,7 +51,8 @@ public class ProfileTest {
     ProfilePage profilePage =
         Selenide.open(CFG.frontUrl(), LoginPage.class)
             .doLogin(user.username(), user.testData().password())
-            .goToProfile();
+            .getHeader()
+            .toProfilePage();
 
     String categoryName = user.testData().categories().getFirst().name();
     profilePage
@@ -64,8 +67,25 @@ public class ProfileTest {
   void checkProfileImageTest(UserJson user, BufferedImage expectedProfileImage) throws IOException {
     Selenide.open(CFG.frontUrl(), LoginPage.class)
         .doLogin(user.username(), user.testData().password())
-        .goToProfile()
+        .getHeader()
+        .toProfilePage()
         .uploadAvatarFromClasspath("img/avatar.png")
         .checkAvatarPicture(expectedProfileImage);
+  }
+
+  @User
+  @Test
+  void editProfile(UserJson user) {
+    String editName = RandomDataUtils.randomName();
+    ProfilePage profilePage =
+        Selenide.open(CFG.frontUrl(), LoginPage.class)
+            .doLogin(user.username(), user.testData().password())
+            .checkThatMainPageIsLoaded()
+            .getHeader()
+            .toProfilePage()
+            .changeName(editName);
+
+    Selenide.refresh();
+    profilePage.checkName(editName);
   }
 }

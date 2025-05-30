@@ -6,6 +6,7 @@ import guru.qa.niffler.model.CurrencyValues;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 
+import javax.annotation.Nullable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.UUID;
@@ -31,6 +32,7 @@ public class SpendEntityRowExtractor implements ResultSetExtractor<SpendEntity> 
    * from spend s join category c on s.category_id = c.id
    * where s.id = ?
    */
+  @Nullable
   @Override
   public SpendEntity extractData(ResultSet rs) throws SQLException, DataAccessException {
     SpendEntity result = new SpendEntity();

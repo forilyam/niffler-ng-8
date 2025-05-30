@@ -7,6 +7,7 @@ import guru.qa.niffler.data.mapper.UserdataUserEntityRowMapper;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 
+import javax.annotation.Nullable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.UUID;
@@ -18,6 +19,7 @@ public class UserdataUserExtractor implements ResultSetExtractor<UserEntity> {
   private UserdataUserExtractor() {
   }
 
+  @Nullable
   @Override
   public UserEntity extractData(ResultSet rs) throws SQLException, DataAccessException {
     UserEntity user = null;
