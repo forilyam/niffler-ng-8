@@ -2,15 +2,13 @@ package guru.qa.niffler.service.impl;
 
 import guru.qa.niffler.api.AuthApi;
 import guru.qa.niffler.api.UserdataApi;
+import guru.qa.niffler.api.core.RestClient.EmtyRestClient;
+import guru.qa.niffler.api.core.ThreadSafeCookieStore;
 import guru.qa.niffler.config.Config;
 import guru.qa.niffler.model.UserJson;
 import guru.qa.niffler.service.UsersClient;
 import io.qameta.allure.Step;
-import io.qameta.allure.okhttp3.AllureOkHttp3;
-import okhttp3.OkHttpClient;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.jackson.JacksonConverterFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -26,32 +24,20 @@ public class UsersApiClient implements UsersClient {
   private static final Config CFG = Config.getInstance();
   private static final String defaultPassword = "12345";
 
-  private final OkHttpClient client = new OkHttpClient.Builder().addNetworkInterceptor(
-      new AllureOkHttp3()
-          .setRequestTemplate("http-request.ftl")
-          .setResponseTemplate("http-response.ftl")
-  ).build();
-
-  private final Retrofit retrofit = new Retrofit.Builder()
-      .baseUrl(CFG.spendUrl())
-      .client(client)
-      .addConverterFactory(JacksonConverterFactory.create())
-      .build();
-
-  private final AuthApi authApi = retrofit.create(AuthApi.class);
-  private final UserdataApi userdataApi = retrofit.create(UserdataApi.class);
+  private final AuthApi authApi = new EmtyRestClient(CFG.authUrl()).create(AuthApi.class);
+  private final UserdataApi userdataApi = new EmtyRestClient(CFG.userdataUrl()).create(UserdataApi.class);
 
   @Step("Create user with username '{0}' using REST API")
   @Nonnull
   @Override
   public UserJson createUser(String username, String password) {
     try {
-      authApi.getRegisterPage().execute();
+      authApi.requestRegisterForm().execute();
       authApi.register(
           username,
           password,
           password,
-          null
+          ThreadSafeCookieStore.INSTANCE.cookieValue("XSRF-TOKEN")
       ).execute();
       UserJson createdUser = requireNonNull(userdataApi.currentUser(username).execute().body());
       return createdUser.withPassword(

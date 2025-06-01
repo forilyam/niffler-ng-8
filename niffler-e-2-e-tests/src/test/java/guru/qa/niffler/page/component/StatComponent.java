@@ -20,11 +20,14 @@ import static java.util.Objects.requireNonNull;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @ParametersAreNonnullByDefault
-public class StatComponent {
+public class StatComponent extends BaseComponent<StatComponent> {
 
-  public final SelenideElement self = $("#stat");
   private final ElementsCollection bubbles = self.$("#legend-container").$$("li");
   private final SelenideElement chart = $("canvas[role='img']");
+
+  public StatComponent() {
+    super($("#stat"));
+  }
 
   public StatComponent checkStatisticBubblesContains(String... texts) {
     bubbles.should(CollectionCondition.texts(texts));

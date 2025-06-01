@@ -17,13 +17,16 @@ import static com.codeborne.selenide.Selenide.$;
 import static guru.qa.niffler.condition.SpendConditions.spends;
 
 @ParametersAreNonnullByDefault
-public class SpendingTable {
+public class SpendingTable extends BaseComponent<SpendingTable> {
 
-  private final SelenideElement self = $("#spendings");
   private final SearchField searchField = new SearchField();
   private final SelenideElement deleteBtn = self.$("#delete");
   private final SelenideElement dialogWindow = $("div[role='dialog']");
   private final ElementsCollection tableRows = self.$("tbody").$$("tr");
+
+  public SpendingTable() {
+    super($("#spendings"));
+  }
 
   @Step("Edit spending with description '{0}'")
   @Nonnull
@@ -63,7 +66,8 @@ public class SpendingTable {
   }
 
   @Step("Check spending table")
-  public void checkSpendTable(SpendJson... expectedSpends) {
+  public SpendingTable checkSpendTable(SpendJson... expectedSpends) {
     tableRows.shouldHave(spends(expectedSpends));
+    return this;
   }
 }

@@ -1,7 +1,6 @@
 package guru.qa.niffler.test.web;
 
 import com.codeborne.selenide.Selenide;
-import guru.qa.niffler.config.Config;
 import guru.qa.niffler.jupiter.annotation.Category;
 import guru.qa.niffler.jupiter.annotation.ScreenShotTest;
 import guru.qa.niffler.jupiter.annotation.User;
@@ -19,8 +18,6 @@ import java.io.IOException;
 @ExtendWith(BrowserExtension.class)
 public class ProfileTest {
 
-  private static final Config CFG = Config.getInstance();
-
   @User(
       categories = @Category(
           archived = false
@@ -29,7 +26,7 @@ public class ProfileTest {
   @Test
   void archiveCategory(UserJson user) {
     ProfilePage profilePage =
-        Selenide.open(CFG.frontUrl(), LoginPage.class)
+        Selenide.open(LoginPage.URL, LoginPage.class)
             .doLogin(user.username(), user.testData().password())
             .getHeader()
             .toProfilePage();
@@ -49,7 +46,7 @@ public class ProfileTest {
   @Test
   void unArchiveCategory(UserJson user) {
     ProfilePage profilePage =
-        Selenide.open(CFG.frontUrl(), LoginPage.class)
+        Selenide.open(LoginPage.URL, LoginPage.class)
             .doLogin(user.username(), user.testData().password())
             .getHeader()
             .toProfilePage();
@@ -65,7 +62,7 @@ public class ProfileTest {
   @User
   @ScreenShotTest(value = "img/expected-avatar.png")
   void checkProfileImageTest(UserJson user, BufferedImage expectedProfileImage) throws IOException {
-    Selenide.open(CFG.frontUrl(), LoginPage.class)
+    Selenide.open(LoginPage.URL, LoginPage.class)
         .doLogin(user.username(), user.testData().password())
         .getHeader()
         .toProfilePage()
@@ -78,12 +75,13 @@ public class ProfileTest {
   void editProfile(UserJson user) {
     String editName = RandomDataUtils.randomName();
     ProfilePage profilePage =
-        Selenide.open(CFG.frontUrl(), LoginPage.class)
+        Selenide.open(LoginPage.URL, LoginPage.class)
             .doLogin(user.username(), user.testData().password())
-            .checkThatMainPageIsLoaded()
+            .checkThatPageLoaded()
             .getHeader()
             .toProfilePage()
-            .changeName(editName);
+            .changeName(editName)
+            .checkAlertMessage("Profile successfully updated");
 
     Selenide.refresh();
     profilePage.checkName(editName);

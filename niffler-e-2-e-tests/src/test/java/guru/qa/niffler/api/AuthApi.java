@@ -14,7 +14,7 @@ public interface AuthApi {
       @Field("_csrf") String csrf);
 
   @GET("register")
-  Call<Void> getRegisterPage();
+  Call<Void> requestRegisterForm();
 
   @POST("register")
   Call<Void> register(

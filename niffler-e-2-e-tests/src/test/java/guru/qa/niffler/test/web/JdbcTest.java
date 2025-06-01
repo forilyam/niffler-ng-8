@@ -1,12 +1,14 @@
 package guru.qa.niffler.test.web;
 
+import guru.qa.niffler.jupiter.extension.InjectClientExtension;
 import guru.qa.niffler.model.CategoryJson;
 import guru.qa.niffler.model.CurrencyValues;
 import guru.qa.niffler.model.SpendJson;
 import guru.qa.niffler.model.UserJson;
-import guru.qa.niffler.service.impl.SpendDbClient;
-import guru.qa.niffler.service.impl.UsersDbClient;
+import guru.qa.niffler.service.SpendClient;
+import guru.qa.niffler.service.UsersClient;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -17,14 +19,16 @@ import static guru.qa.niffler.utils.RandomDataUtils.randomCategoryName;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-//@Disabled
+@ExtendWith(InjectClientExtension.class)
 public class JdbcTest {
+
+  private UsersClient usersClient;
+  private SpendClient spendClient;
 
   @Test
   void createSpendTest() {
-    SpendDbClient spendDbClient = new SpendDbClient();
     String username = "duck-15";
-    SpendJson spend = spendDbClient.create(
+    SpendJson spend = spendClient.create(
         new SpendJson(
             null,
             new Date(),
@@ -42,10 +46,10 @@ public class JdbcTest {
     );
     assertThat(spend).isNotNull();
 
-    Optional<SpendJson> createdSpend = spendDbClient.findByUsernameAndSpendDescription(spend.username(), spend.description());
+    Optional<SpendJson> createdSpend = spendClient.findByUsernameAndSpendDescription(spend.username(), spend.description());
     assertTrue(createdSpend.isPresent());
 
-    Optional<CategoryJson> createdCategory = spendDbClient.findCategoryByUsernameAndCategoryName(spend.username(), spend.category().name());
+    Optional<CategoryJson> createdCategory = spendClient.findCategoryByUsernameAndCategoryName(spend.username(), spend.category().name());
     assertTrue(createdCategory.isPresent());
   }
 
@@ -54,16 +58,15 @@ public class JdbcTest {
   })
   @ParameterizedTest
   void createUserTest(String uname) {
-    UsersDbClient usersDbClient = new UsersDbClient();
 
-    UserJson user = usersDbClient.createUser(
+    UserJson user = usersClient.createUser(
         uname,
         "12345"
     );
 
-    usersDbClient.createIncomeInvitations(user, 1);
-    usersDbClient.createOutcomeInvitations(user, 1);
-    usersDbClient.createFriends(user, 1);
+    usersClient.createIncomeInvitations(user, 1);
+    usersClient.createOutcomeInvitations(user, 1);
+    usersClient.createFriends(user, 1);
   }
 
 }

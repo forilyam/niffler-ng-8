@@ -1,16 +1,12 @@
 package guru.qa.niffler.service.impl;
 
 import guru.qa.niffler.api.SpendApi;
-import guru.qa.niffler.config.Config;
+import guru.qa.niffler.api.core.RestClient;
 import guru.qa.niffler.model.CategoryJson;
 import guru.qa.niffler.model.SpendJson;
 import guru.qa.niffler.service.SpendClient;
 import io.qameta.allure.Step;
-import okhttp3.OkHttpClient;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.jackson.JacksonConverterFactory;
-import io.qameta.allure.okhttp3.AllureOkHttp3;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -23,23 +19,14 @@ import static java.util.Objects.requireNonNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ParametersAreNonnullByDefault
-public class SpendApiClient implements SpendClient {
+public class SpendApiClient extends RestClient implements SpendClient {
 
-  private static final Config CFG = Config.getInstance();
+  private final SpendApi spendApi;
 
-  private final OkHttpClient client = new OkHttpClient.Builder().addNetworkInterceptor(
-      new AllureOkHttp3()
-          .setRequestTemplate("http-request.ftl")
-          .setResponseTemplate("http-response.ftl")
-  ).build();
-
-  private final Retrofit retrofit = new Retrofit.Builder()
-      .baseUrl(CFG.spendUrl())
-      .client(client)
-      .addConverterFactory(JacksonConverterFactory.create())
-      .build();
-
-  private final SpendApi spendApi = retrofit.create(SpendApi.class);
+  public SpendApiClient() {
+    super(CFG.spendUrl());
+    this.spendApi = create(SpendApi.class);
+  }
 
   public void deleteSpends(String username, List<String> ids) {
     final Response<String> response;

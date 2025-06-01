@@ -2,7 +2,6 @@ package guru.qa.niffler.test.web;
 
 import com.codeborne.selenide.Selenide;
 import guru.qa.niffler.condition.Color;
-import guru.qa.niffler.config.Config;
 import guru.qa.niffler.jupiter.annotation.Category;
 import guru.qa.niffler.jupiter.annotation.ScreenShotTest;
 import guru.qa.niffler.jupiter.annotation.Spending;
@@ -21,8 +20,6 @@ import java.util.Date;
 @ExtendWith(BrowserExtension.class)
 public class SpendingTest {
 
-  private static final Config CFG = Config.getInstance();
-
   @User(
       spendings = @Spending(
           category = "Обучение",
@@ -35,7 +32,7 @@ public class SpendingTest {
   void spendingDescriptionShouldBeUpdatedByTableAction(UserJson user) {
     final String newDescription = "Обучение Niffler NG";
 
-    Selenide.open(CFG.frontUrl(), LoginPage.class)
+    Selenide.open(LoginPage.URL, LoginPage.class)
         .doLogin(user.username(), user.testData().password())
         .getSpendingTable()
         .editSpending(user.testData().spendings().getFirst().description())
@@ -60,7 +57,7 @@ public class SpendingTest {
   )
   @ScreenShotTest(value = "img/expected-stat.png")
   void checkStatComponentTest(UserJson user, BufferedImage expected) throws IOException {
-    Selenide.open(CFG.frontUrl(), LoginPage.class)
+    Selenide.open(LoginPage.URL, LoginPage.class)
         .doLogin(user.username(), user.testData().password())
         .getStatComponent()
         .checkStatisticImage(expected)
@@ -85,7 +82,7 @@ public class SpendingTest {
   )
   @Test
   void checkSpendingTableTest(UserJson user) {
-    Selenide.open(CFG.frontUrl(), LoginPage.class)
+    Selenide.open(LoginPage.URL, LoginPage.class)
         .doLogin(user.username(), user.testData().password())
         .getSpendingTable()
         .checkSpendTable(user.testData().spendings().toArray(SpendJson[]::new));
@@ -102,7 +99,7 @@ public class SpendingTest {
       })
   @ScreenShotTest(value = "img/expected-stat-edit.png")
   void checkStatComponentAfterEditingTest(UserJson user, BufferedImage expected) throws IOException {
-    Selenide.open(CFG.frontUrl(), LoginPage.class)
+    Selenide.open(LoginPage.URL, LoginPage.class)
         .doLogin(user.username(), user.testData().password())
         .getSpendingTable()
         .editSpending(user.testData().spendings().getFirst().description())
@@ -121,7 +118,7 @@ public class SpendingTest {
       ))
   @ScreenShotTest(value = "img/expected-stat-delete.png")
   void checkStatComponentAfterDeletingTest(UserJson user, BufferedImage expected) throws IOException {
-    Selenide.open(CFG.frontUrl(), LoginPage.class)
+    Selenide.open(LoginPage.URL, LoginPage.class)
         .doLogin(user.username(), user.testData().password())
         .getSpendingTable()
         .deleteSpending(user.testData().spendings().getFirst().description())
@@ -155,7 +152,7 @@ public class SpendingTest {
   )
   @ScreenShotTest(value = "img/expected-stat-archived.png")
   void checkStatComponentArchivedCategoriesTest(UserJson user, BufferedImage expected) throws IOException {
-    Selenide.open(CFG.frontUrl(), LoginPage.class)
+    Selenide.open(LoginPage.URL, LoginPage.class)
         .doLogin(user.username(), user.testData().password())
         .getStatComponent()
         .checkStatisticBubblesContains("Одежда 5000 ₽", "Archived 3800 ₽")
@@ -180,11 +177,12 @@ public class SpendingTest {
         user.username()
     );
 
-    Selenide.open(CFG.frontUrl(), LoginPage.class)
+    Selenide.open(LoginPage.URL, LoginPage.class)
         .doLogin(user.username(), user.testData().password())
         .getHeader()
         .addSpendingPage()
         .addNewSpending(newSpend)
+        .checkAlertMessage("New spending is successfully created")
         .getSpendingTable()
         .checkSpendTable(newSpend);
   }

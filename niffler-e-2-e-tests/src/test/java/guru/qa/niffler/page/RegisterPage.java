@@ -6,13 +6,15 @@ import io.qameta.allure.Step;
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 
-import static com.codeborne.selenide.Condition.attribute;
-import static com.codeborne.selenide.Condition.text;
+import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$x;
 
 @ParametersAreNonnullByDefault
-public class RegisterPage {
+public class RegisterPage extends BasePage<RegisterPage> {
+
+  public static final String URL = CFG.authUrl() + "register";
+
   private final SelenideElement usernameInput = $("input[name='username']");
   private final SelenideElement passwordInput = $("input[name='password']");
   private final SelenideElement passwordSubmitInput = $("input[name='passwordSubmit']");
@@ -21,6 +23,16 @@ public class RegisterPage {
   private final SelenideElement passwordErrorText = $x("//*[@id='password']/following-sibling::span");
   private final SelenideElement passwordSubmitErrorText = $x("//*[@id='passwordSubmit']/following-sibling::span");
   private final String VALIDATION_MESSAGE = "Заполните это поле.";
+
+  @Step("Check that page is loaded")
+  @Override
+  @Nonnull
+  public RegisterPage checkThatPageLoaded() {
+    usernameInput.should(visible);
+    passwordInput.should(visible);
+    passwordSubmitInput.should(visible);
+    return this;
+  }
 
   @Step("Set username: '{0}'")
   @Nonnull
