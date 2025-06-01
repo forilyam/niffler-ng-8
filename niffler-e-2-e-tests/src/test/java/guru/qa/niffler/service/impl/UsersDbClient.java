@@ -15,13 +15,18 @@ import guru.qa.niffler.model.FriendshipStatus;
 import guru.qa.niffler.model.TestData;
 import guru.qa.niffler.model.UserJson;
 import guru.qa.niffler.service.UsersClient;
+import io.qameta.allure.Step;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Arrays;
 
 import static guru.qa.niffler.utils.RandomDataUtils.randomUsername;
+import static java.util.Objects.requireNonNull;
 
+@ParametersAreNonnullByDefault
 public class UsersDbClient implements UsersClient {
 
   private static final Config CFG = Config.getInstance();
@@ -35,9 +40,11 @@ public class UsersDbClient implements UsersClient {
       CFG.userdataJdbcUrl()
   );
 
+  @Step("Create user with username '{0}' using SQL INSERT")
+  @Nonnull
   @Override
   public UserJson createUser(String username, String password) {
-    return xaTransactionTemplate.execute(() -> {
+    return requireNonNull(xaTransactionTemplate.execute(() -> {
           authUserRepository.create(
               authUserEntity(username, password)
           );
@@ -48,9 +55,10 @@ public class UsersDbClient implements UsersClient {
               null
           ).withTestData(new TestData(password));
         }
-    );
+    ));
   }
 
+  @Step("Create {1} income invitations for user using SQL INSERT")
   @Override
   public void createIncomeInvitations(UserJson targetUser, int count) {
     if (count > 0) {
@@ -62,16 +70,17 @@ public class UsersDbClient implements UsersClient {
         targetUser.testData()
             .incomeInvitations()
             .add(UserJson.fromEntity(
-                    xaTransactionTemplate.execute(() -> {
-                          final String username = randomUsername();
-                          final UserEntity newUser = createNewUser(username, "12345");
-                          userdataUserRepository.sendInvitation(
-                              newUser,
-                              targetEntity
-                          );
-                          return newUser;
-                        }
-                    ),
+                    requireNonNull(
+                        xaTransactionTemplate.execute(() -> {
+                              final String username = randomUsername();
+                              final UserEntity newUser = createNewUser(username, "12345");
+                              userdataUserRepository.sendInvitation(
+                                  newUser,
+                                  targetEntity
+                              );
+                              return newUser;
+                            }
+                        )),
                     FriendshipStatus.INVITE_RECEIVED
                 )
             );
@@ -79,6 +88,7 @@ public class UsersDbClient implements UsersClient {
     }
   }
 
+  @Step("Create {1} outcome invitations for user using SQL INSERT")
   @Override
   public void createOutcomeInvitations(UserJson targetUser, int count) {
     if (count > 0) {
@@ -90,16 +100,17 @@ public class UsersDbClient implements UsersClient {
         targetUser.testData()
             .outcomeInvitations()
             .add(UserJson.fromEntity(
-                    xaTransactionTemplate.execute(() -> {
-                          final String username = randomUsername();
-                          final UserEntity newUser = createNewUser(username, "12345");
-                          userdataUserRepository.sendInvitation(
-                              targetEntity,
-                              newUser
-                          );
-                          return newUser;
-                        }
-                    ),
+                    requireNonNull(
+                        xaTransactionTemplate.execute(() -> {
+                              final String username = randomUsername();
+                              final UserEntity newUser = createNewUser(username, "12345");
+                              userdataUserRepository.sendInvitation(
+                                  targetEntity,
+                                  newUser
+                              );
+                              return newUser;
+                            }
+                        )),
                     FriendshipStatus.INVITE_SENT
                 )
             );
@@ -107,6 +118,7 @@ public class UsersDbClient implements UsersClient {
     }
   }
 
+  @Step("Create {1} friends for user using SQL INSERT")
   @Override
   public void createFriends(UserJson targetUser, int count) {
     if (count > 0) {
@@ -118,16 +130,17 @@ public class UsersDbClient implements UsersClient {
         targetUser.testData()
             .friends()
             .add(UserJson.fromEntity(
-                    xaTransactionTemplate.execute(() -> {
-                          final String username = randomUsername();
-                          final UserEntity newUser = createNewUser(username, "12345");
-                          userdataUserRepository.addFriend(
-                              targetEntity,
-                              newUser
-                          );
-                          return newUser;
-                        }
-                    ),
+                    requireNonNull(
+                        xaTransactionTemplate.execute(() -> {
+                              final String username = randomUsername();
+                              final UserEntity newUser = createNewUser(username, "12345");
+                              userdataUserRepository.addFriend(
+                                  targetEntity,
+                                  newUser
+                              );
+                              return newUser;
+                            }
+                        )),
                     FriendshipStatus.FRIEND
                 )
             );

@@ -5,17 +5,20 @@ import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
 import com.codeborne.selenide.collections.AnyMatch;
 import guru.qa.niffler.utils.ScreenDiffResult;
+import io.qameta.allure.Step;
 
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
-import static com.codeborne.selenide.Condition.text;
-import static com.codeborne.selenide.Condition.visible;
+import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selenide.*;
 import static java.util.Objects.requireNonNull;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
+@ParametersAreNonnullByDefault
 public class ProfilePage {
 
   private final ElementsCollection categoryLabels = $$(".MuiChip-label");
@@ -33,6 +36,11 @@ public class ProfilePage {
   private final SelenideElement pictureInput = $("input[type='file']");
   private final SelenideElement avatar = $("#image__input").parent().$("img");
 
+  private final SelenideElement nameInput = $("input[name='name']");
+  private final SelenideElement saveChangesBtn = $("button[type='submit']");
+
+  @Step("Check category '{0}' is presented")
+  @Nonnull
   public ProfilePage categoriesShouldHaveLabel(String categoryName) {
     categoryLabels.shouldHave(new AnyMatch(
         "Category with name %s is presented".formatted(categoryName),
@@ -41,6 +49,8 @@ public class ProfilePage {
     return this;
   }
 
+  @Step("Archive category: '{0}'")
+  @Nonnull
   public ProfilePage archiveCategory(String category) {
     archiveCategoryBtn.click();
     archiveCategoryDialog.should(visible);
@@ -51,12 +61,15 @@ public class ProfilePage {
     return this;
   }
 
-
+  @Step("Show archived categories")
+  @Nonnull
   public ProfilePage showArchivedCategories() {
     archivedSwitcher.click();
     return this;
   }
 
+  @Step("Unarchive category: '{0}'")
+  @Nonnull
   public ProfilePage unArchiveCategory(String category) {
     bubblesArchived.find(text(category)).parent().$("button[aria-label='Unarchive category']").click();
     archiveCategoryDialog.should(visible);
@@ -67,33 +80,53 @@ public class ProfilePage {
     return this;
   }
 
-  public ProfilePage checkCategoryExists(String category) {
+  @Step("Check category: '{0}'")
+  public void checkCategoryExists(String category) {
     bubbles.find(text(category)).shouldBe(visible);
-    return this;
   }
 
-  public ProfilePage checkArchivedCategoryExists(String category) {
+  @Step("Check archived category: '{0}'")
+  public void checkArchivedCategoryExists(String category) {
     archivedSwitcher.click();
     bubblesArchived.find(text(category)).shouldBe(visible);
-    return this;
   }
 
+  @Step("Upload avatar")
+  @Nonnull
   public ProfilePage uploadAvatarFromClasspath(String path) {
     pictureInput.uploadFromClasspath(path);
     return this;
   }
 
-  public ProfilePage checkAvatarPicture(BufferedImage expected) throws IOException {
+  @Step("Check avatar")
+  public void checkAvatarPicture(BufferedImage expected) throws IOException {
     Selenide.sleep(1000);
     assertFalse(
         new ScreenDiffResult(
             avatarScreenshot(), expected
         )
     );
+  }
+
+  @Nonnull
+  public BufferedImage avatarScreenshot() throws IOException {
+    return ImageIO.read(requireNonNull(avatar.screenshot()));
+  }
+
+
+  @Step("Change name: '{0}'")
+  @Nonnull
+  public ProfilePage changeName(String name) {
+    nameInput.clear();
+    nameInput.setValue(name).pressEnter();
+    saveChangesBtn.click();
     return this;
   }
 
-  public BufferedImage avatarScreenshot() throws IOException {
-    return ImageIO.read(requireNonNull(avatar.screenshot()));
+  @Step("Check name: '{0}'")
+  @Nonnull
+  public ProfilePage checkName(String name) {
+    nameInput.shouldHave(value(name));
+    return this;
   }
 }

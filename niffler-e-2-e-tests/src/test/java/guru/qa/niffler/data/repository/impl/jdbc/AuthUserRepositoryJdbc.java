@@ -7,15 +7,19 @@ import guru.qa.niffler.data.dao.impl.AuthUserDaoJdbc;
 import guru.qa.niffler.data.entity.auth.AuthUserEntity;
 import guru.qa.niffler.data.entity.auth.AuthorityEntity;
 import guru.qa.niffler.data.repository.AuthUserRepository;
+import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Optional;
 import java.util.UUID;
 
+@ParametersAreNonnullByDefault
 public class AuthUserRepositoryJdbc implements AuthUserRepository {
 
   private final AuthUserDao authUserDao = new AuthUserDaoJdbc();
   private final AuthAuthorityDao authAuthorityDao = new AuthAuthorityDaoJdbc();
 
+  @NotNull
   @Override
   public AuthUserEntity create(AuthUserEntity user) {
     authUserDao.create(user);
@@ -23,6 +27,7 @@ public class AuthUserRepositoryJdbc implements AuthUserRepository {
     return user;
   }
 
+  @NotNull
   @Override
   public AuthUserEntity update(AuthUserEntity user) {
     authUserDao.update(user);
@@ -30,6 +35,7 @@ public class AuthUserRepositoryJdbc implements AuthUserRepository {
     return user;
   }
 
+  @NotNull
   @Override
   public Optional<AuthUserEntity> findById(UUID id) {
     Optional<AuthUserEntity> userEntity = authUserDao.findById(id);
@@ -40,6 +46,7 @@ public class AuthUserRepositoryJdbc implements AuthUserRepository {
     return userEntity;
   }
 
+  @NotNull
   @Override
   public Optional<AuthUserEntity> findByUsername(String username) {
     Optional<AuthUserEntity> userEntity = authUserDao.findByUsername(username);

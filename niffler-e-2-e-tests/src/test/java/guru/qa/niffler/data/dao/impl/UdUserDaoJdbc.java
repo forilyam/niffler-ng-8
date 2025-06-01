@@ -5,7 +5,9 @@ import guru.qa.niffler.data.dao.UdUserDao;
 import guru.qa.niffler.data.entity.userdata.FriendshipEntity;
 import guru.qa.niffler.data.entity.userdata.UserEntity;
 import guru.qa.niffler.model.CurrencyValues;
+import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -16,11 +18,14 @@ import java.util.UUID;
 
 import static guru.qa.niffler.data.jdbc.Connections.holder;
 
+@ParametersAreNonnullByDefault
 public class UdUserDaoJdbc implements UdUserDao {
 
   private static final Config CFG = Config.getInstance();
   private final String url = CFG.userdataJdbcUrl();
 
+  @SuppressWarnings("resource")
+  @NotNull
   @Override
   public UserEntity create(UserEntity user) {
     try (PreparedStatement ps = holder(CFG.userdataJdbcUrl()).connection().prepareStatement(
@@ -51,6 +56,8 @@ public class UdUserDaoJdbc implements UdUserDao {
     }
   }
 
+  @SuppressWarnings("resource")
+  @NotNull
   @Override
   public UserEntity update(UserEntity user) {
     try (PreparedStatement usersPs = holder(url).connection().prepareStatement(
@@ -95,6 +102,8 @@ public class UdUserDaoJdbc implements UdUserDao {
     return user;
   }
 
+  @SuppressWarnings("resource")
+  @NotNull
   @Override
   public Optional<UserEntity> findById(UUID id) {
     try (PreparedStatement ps = holder(url).connection().prepareStatement(
@@ -123,6 +132,8 @@ public class UdUserDaoJdbc implements UdUserDao {
     }
   }
 
+  @SuppressWarnings("resource")
+  @NotNull
   @Override
   public Optional<UserEntity> findByUsername(String username) {
     try (PreparedStatement ps = holder(url).connection().prepareStatement(
@@ -151,6 +162,7 @@ public class UdUserDaoJdbc implements UdUserDao {
     }
   }
 
+  @SuppressWarnings("resource")
   @Override
   public void delete(UserEntity user) {
     try (PreparedStatement ps = holder(url).connection().prepareStatement(
@@ -163,6 +175,8 @@ public class UdUserDaoJdbc implements UdUserDao {
     }
   }
 
+  @SuppressWarnings("resource")
+  @NotNull
   @Override
   public List<UserEntity> findAll() {
     try (PreparedStatement ps = holder(url).connection().prepareStatement(
