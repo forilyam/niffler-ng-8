@@ -7,12 +7,21 @@ import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 import static com.codeborne.selenide.Condition.text;
+import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.$;
 
 @ParametersAreNonnullByDefault
-public class SuccessfulRegistrationPage {
+public class SuccessfulRegistrationPage extends BasePage<SuccessfulRegistrationPage> {
   private final SelenideElement congratsField = $("p.form__paragraph_success");
   private final SelenideElement signInBtn = $(".form_sign-in");
+
+  @Step("Check that page is loaded")
+  @Override
+  @Nonnull
+  public SuccessfulRegistrationPage checkThatPageLoaded() {
+    signInBtn.should(visible);
+    return this;
+  }
 
   @Step("Check successful registration")
   @Nonnull

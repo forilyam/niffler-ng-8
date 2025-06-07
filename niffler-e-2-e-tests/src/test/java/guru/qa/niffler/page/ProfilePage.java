@@ -19,7 +19,9 @@ import static java.util.Objects.requireNonNull;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @ParametersAreNonnullByDefault
-public class ProfilePage {
+public class ProfilePage extends BasePage<ProfilePage> {
+
+  public static final String URL = CFG.frontUrl() + "profile";
 
   private final ElementsCollection categoryLabels = $$(".MuiChip-label");
   private final SelenideElement archiveCategoryBtn = $("button[aria-label='Archive category']");
@@ -36,8 +38,17 @@ public class ProfilePage {
   private final SelenideElement pictureInput = $("input[type='file']");
   private final SelenideElement avatar = $("#image__input").parent().$("img");
 
+  private final SelenideElement userName = $("#username");
   private final SelenideElement nameInput = $("input[name='name']");
   private final SelenideElement saveChangesBtn = $("button[type='submit']");
+
+  @Step("Check that page is loaded")
+  @Override
+  @Nonnull
+  public ProfilePage checkThatPageLoaded() {
+    userName.should(visible);
+    return this;
+  }
 
   @Step("Check category '{0}' is presented")
   @Nonnull

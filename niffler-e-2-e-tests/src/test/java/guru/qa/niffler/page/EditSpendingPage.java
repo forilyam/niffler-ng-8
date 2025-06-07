@@ -8,10 +8,13 @@ import io.qameta.allure.Step;
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 
+import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.$;
 
 @ParametersAreNonnullByDefault
-public class EditSpendingPage {
+public class EditSpendingPage extends BasePage<EditSpendingPage> {
+
+  public static final String URL = CFG.frontUrl() + "spending";
 
   private final SelenideElement descriptionInput = $("#description");
   private final SelenideElement submitBtn = $("#save");
@@ -20,6 +23,14 @@ public class EditSpendingPage {
   private final SelenideElement categoryInput = $("#category");
 
   private final Calendar calendar = new Calendar();
+
+  @Step("Check that the page is loaded")
+  @Override
+  @Nonnull
+  public EditSpendingPage checkThatPageLoaded() {
+    amountInput.should(visible);
+    return this;
+  }
 
   @Step("Set new spending description: '{0}'")
   public MainPage editDescription(String description) {

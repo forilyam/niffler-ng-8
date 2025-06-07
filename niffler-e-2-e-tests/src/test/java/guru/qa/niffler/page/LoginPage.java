@@ -6,12 +6,14 @@ import io.qameta.allure.Step;
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 
-import static com.codeborne.selenide.Condition.attribute;
-import static com.codeborne.selenide.Condition.text;
+import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selenide.$;
 
 @ParametersAreNonnullByDefault
-public class LoginPage {
+public class LoginPage extends BasePage<LoginPage> {
+
+  public static final String URL = CFG.authUrl() + "login";
+
   private final String VALIDATION_MESSAGE = "Заполните это поле.";
 
   private final SelenideElement usernameInput = $("input[name='username']");
@@ -19,6 +21,15 @@ public class LoginPage {
   private final SelenideElement submitBtn = $("button[type='submit']");
   private final SelenideElement registerBtn = $(".form__register");
   private final SelenideElement userIncorrectText = $(".form__error");
+
+  @Override
+  @Step("Check that page is loaded")
+  @Nonnull
+  public LoginPage checkThatPageLoaded() {
+    usernameInput.should(visible);
+    passwordInput.should(visible);
+    return this;
+  }
 
   public MainPage doLogin(String username, String password) {
     usernameInput.setValue(username);

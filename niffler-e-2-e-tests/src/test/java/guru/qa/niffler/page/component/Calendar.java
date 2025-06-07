@@ -14,15 +14,18 @@ import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
 import static java.util.Calendar.*;
 
-public class Calendar {
+public class Calendar extends BaseComponent<Calendar> {
 
-  private final SelenideElement self = $(".MuiPickersLayout-root");
   private final SelenideElement calendarButton = $("button[aria-label*='Choose date']");
   private final SelenideElement currentMonthAndYear = self.$(".MuiPickersCalendarHeader-label");
   private final ElementsCollection selectYear = self.$$(".MuiPickersYear-yearButton");
   private final SelenideElement prevMonthButton = self.$("button[title='Previous month']");
   private final SelenideElement nextMonthButton = self.$("button[title='Next month']");
   private final ElementsCollection days = $$(".MuiPickersSlideTransition-root button");
+
+  public Calendar() {
+    super($(".MuiPickersLayout-root"));
+  }
 
   @Step("Select date in calendar: '{date}'")
   public void selectDateInCalendar(Date date) {

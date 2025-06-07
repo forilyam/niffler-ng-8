@@ -15,7 +15,10 @@ import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.$;
 
 @ParametersAreNonnullByDefault
-public class FriendsPage {
+public class FriendsPage extends BasePage<FriendsPage> {
+
+  public static final String URL = CFG.frontUrl() + "people/friends";
+
   private final SelenideElement peopleTab = $("a[href='/people/friends']");
   private final SelenideElement allTab = $("a[href='/people/all']");
   private final SelenideElement friendsTable = $("#friends");
@@ -24,9 +27,10 @@ public class FriendsPage {
   private final SelenideElement searchInput = $("input");
   private final SelenideElement dialogWindow = $("div[role='dialog']");
 
-  @Step("Check that the friends page is loaded")
+  @Step("Check that the page is loaded")
+  @Override
   @Nonnull
-  public FriendsPage checkThatFriendsPageLoaded() {
+  public FriendsPage checkThatPageLoaded() {
     peopleTab.shouldBe(visible);
     allTab.shouldBe(visible);
     return this;

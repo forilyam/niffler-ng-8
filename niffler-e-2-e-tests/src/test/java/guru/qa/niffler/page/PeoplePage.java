@@ -12,7 +12,9 @@ import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Selenide.$;
 
 @ParametersAreNonnullByDefault
-public class PeoplePage {
+public class PeoplePage extends BasePage<PeoplePage> {
+
+  public static final String URL = CFG.frontUrl() + "people/all";
 
   private final SelenideElement peopleTab = $("a[href='/people/friends']");
   private final SelenideElement allTab = $("a[href='/people/all']");
@@ -20,9 +22,10 @@ public class PeoplePage {
 
   private final SearchField searchInput = new SearchField();
 
-  @Step("Check that the all peoples page is loaded")
+  @Step("Check that the page is loaded")
+  @Override
   @Nonnull
-  public PeoplePage checkThatAllPeoplesPageLoaded() {
+  public PeoplePage checkThatPageLoaded() {
     peopleTab.shouldBe(Condition.visible);
     allTab.shouldBe(Condition.visible);
     return this;
