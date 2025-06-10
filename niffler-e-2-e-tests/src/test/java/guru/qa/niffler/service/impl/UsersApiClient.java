@@ -13,6 +13,8 @@ import retrofit2.Response;
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 
 import static guru.qa.niffler.utils.RandomDataUtils.randomUsername;
 import static java.util.Objects.requireNonNull;
@@ -116,5 +118,18 @@ public class UsersApiClient implements UsersClient {
         assertEquals(200, response.code());
       }
     }
+  }
+
+  @Step("Get all users using REST API")
+  @Nonnull
+  public List<UserJson> allUsers(String username, String searchQuery) {
+    final Response<List<UserJson>> response;
+    try {
+      response = userdataApi.allUsers(username, searchQuery).execute();
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+    assertEquals(200, response.code());
+    return response.body() != null ? response.body() : Collections.emptyList();
   }
 }
