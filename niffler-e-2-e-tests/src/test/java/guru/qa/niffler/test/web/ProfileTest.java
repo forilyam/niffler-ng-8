@@ -1,12 +1,12 @@
 package guru.qa.niffler.test.web;
 
 import com.codeborne.selenide.Selenide;
+import guru.qa.niffler.jupiter.annotation.ApiLogin;
 import guru.qa.niffler.jupiter.annotation.Category;
 import guru.qa.niffler.jupiter.annotation.ScreenShotTest;
 import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.jupiter.extension.BrowserExtension;
 import guru.qa.niffler.model.UserJson;
-import guru.qa.niffler.page.LoginPage;
 import guru.qa.niffler.page.ProfilePage;
 import guru.qa.niffler.utils.RandomDataUtils;
 import org.junit.jupiter.api.Test;
@@ -23,16 +23,11 @@ public class ProfileTest {
           archived = false
       )
   )
+  @ApiLogin
   @Test
   void archiveCategory(UserJson user) {
-    ProfilePage profilePage =
-        Selenide.open(LoginPage.URL, LoginPage.class)
-            .doLogin(user.username(), user.testData().password())
-            .getHeader()
-            .toProfilePage();
-
     String categoryName = user.testData().categories().getFirst().name();
-    profilePage
+    Selenide.open(ProfilePage.URL, ProfilePage.class)
         .categoriesShouldHaveLabel(categoryName)
         .archiveCategory(categoryName)
         .checkArchivedCategoryExists(categoryName);
@@ -43,16 +38,11 @@ public class ProfileTest {
           archived = true
       )
   )
+  @ApiLogin
   @Test
   void unArchiveCategory(UserJson user) {
-    ProfilePage profilePage =
-        Selenide.open(LoginPage.URL, LoginPage.class)
-            .doLogin(user.username(), user.testData().password())
-            .getHeader()
-            .toProfilePage();
-
     String categoryName = user.testData().categories().getFirst().name();
-    profilePage
+    Selenide.open(ProfilePage.URL, ProfilePage.class)
         .showArchivedCategories()
         .categoriesShouldHaveLabel(categoryName)
         .unArchiveCategory(categoryName)
@@ -60,26 +50,21 @@ public class ProfileTest {
   }
 
   @User
+  @ApiLogin
   @ScreenShotTest(value = "img/expected-avatar.png")
   void checkProfileImageTest(UserJson user, BufferedImage expectedProfileImage) throws IOException {
-    Selenide.open(LoginPage.URL, LoginPage.class)
-        .doLogin(user.username(), user.testData().password())
-        .getHeader()
-        .toProfilePage()
+    Selenide.open(ProfilePage.URL, ProfilePage.class)
         .uploadAvatarFromClasspath("img/avatar.png")
         .checkAvatarPicture(expectedProfileImage);
   }
 
   @User
+  @ApiLogin
   @Test
   void editProfile(UserJson user) {
     String editName = RandomDataUtils.randomName();
     ProfilePage profilePage =
-        Selenide.open(LoginPage.URL, LoginPage.class)
-            .doLogin(user.username(), user.testData().password())
-            .checkThatPageLoaded()
-            .getHeader()
-            .toProfilePage()
+        Selenide.open(ProfilePage.URL, ProfilePage.class)
             .changeName(editName)
             .checkAlertMessage("Profile successfully updated");
 
