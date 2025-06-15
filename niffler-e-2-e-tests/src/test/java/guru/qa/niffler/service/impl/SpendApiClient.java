@@ -3,17 +3,17 @@ package guru.qa.niffler.service.impl;
 import guru.qa.niffler.api.SpendApi;
 import guru.qa.niffler.api.core.RestClient;
 import guru.qa.niffler.model.CategoryJson;
+import guru.qa.niffler.model.CurrencyValues;
 import guru.qa.niffler.model.SpendJson;
 import guru.qa.niffler.service.SpendClient;
 import io.qameta.allure.Step;
 import retrofit2.Response;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.IOException;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static java.util.Objects.requireNonNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -69,6 +69,26 @@ public class SpendApiClient extends RestClient implements SpendClient {
     return requireNonNull(response.body());
   }
 
+  @Step("Get spends using REST API")
+  @Nonnull
+  public List<SpendJson> getSpends(
+      String username,
+      @Nullable CurrencyValues currencyValues,
+      @Nullable Date from,
+      @Nullable Date to) {
+    final Response<List<SpendJson>> response;
+    try {
+      response = spendApi.getSpends(username, currencyValues, from, to)
+          .execute();
+    } catch (IOException e) {
+      throw new AssertionError(e);
+    }
+    assertEquals(200, response.code());
+    return response.body() != null
+        ? response.body()
+        : Collections.emptyList();
+  }
+
   @Step("Create category using REST API")
   @Nonnull
   public CategoryJson createCategory(CategoryJson category) {
@@ -93,6 +113,22 @@ public class SpendApiClient extends RestClient implements SpendClient {
   @Override
   public Optional<CategoryJson> findCategoryByUsernameAndCategoryName(String username, String name) {
     throw new UnsupportedOperationException("Method 'findCategoryByUsernameAndCategoryName' is not implemented");
+  }
+
+  @Step("Get categories using REST API")
+  @Nonnull
+  public List<CategoryJson> getCategories(String username, boolean excludeArchived) {
+    final Response<List<CategoryJson>> response;
+    try {
+      response = spendApi.getCategories(username, excludeArchived)
+          .execute();
+    } catch (IOException e) {
+      throw new AssertionError(e);
+    }
+    assertEquals(200, response.code());
+    return response.body() != null
+        ? response.body()
+        : Collections.emptyList();
   }
 
   @Nonnull

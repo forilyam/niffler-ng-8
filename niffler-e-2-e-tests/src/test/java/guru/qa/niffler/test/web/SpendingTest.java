@@ -2,13 +2,10 @@ package guru.qa.niffler.test.web;
 
 import com.codeborne.selenide.Selenide;
 import guru.qa.niffler.condition.Color;
-import guru.qa.niffler.jupiter.annotation.Category;
-import guru.qa.niffler.jupiter.annotation.ScreenShotTest;
-import guru.qa.niffler.jupiter.annotation.Spending;
-import guru.qa.niffler.jupiter.annotation.User;
+import guru.qa.niffler.jupiter.annotation.*;
 import guru.qa.niffler.jupiter.extension.BrowserExtension;
 import guru.qa.niffler.model.*;
-import guru.qa.niffler.page.LoginPage;
+import guru.qa.niffler.page.MainPage;
 import guru.qa.niffler.utils.RandomDataUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,12 +25,12 @@ public class SpendingTest {
           currency = CurrencyValues.RUB
       )
   )
+  @ApiLogin
   @Test
   void spendingDescriptionShouldBeUpdatedByTableAction(UserJson user) {
     final String newDescription = "Обучение Niffler NG";
 
-    Selenide.open(LoginPage.URL, LoginPage.class)
-        .doLogin(user.username(), user.testData().password())
+    Selenide.open(MainPage.URL, MainPage.class)
         .getSpendingTable()
         .editSpending(user.testData().spendings().getFirst().description())
         .editDescription(newDescription)
@@ -55,10 +52,10 @@ public class SpendingTest {
               currency = CurrencyValues.RUB
           )}
   )
+  @ApiLogin
   @ScreenShotTest(value = "img/expected-stat.png")
   void checkStatComponentTest(UserJson user, BufferedImage expected) throws IOException {
-    Selenide.open(LoginPage.URL, LoginPage.class)
-        .doLogin(user.username(), user.testData().password())
+    Selenide.open(MainPage.URL, MainPage.class)
         .getStatComponent()
         .checkStatisticImage(expected)
         .checkStatBubblesInAnyOrder(
@@ -80,10 +77,10 @@ public class SpendingTest {
               currency = CurrencyValues.RUB
           )}
   )
+  @ApiLogin
   @Test
   void checkSpendingTableTest(UserJson user) {
-    Selenide.open(LoginPage.URL, LoginPage.class)
-        .doLogin(user.username(), user.testData().password())
+    Selenide.open(MainPage.URL, MainPage.class)
         .getSpendingTable()
         .checkSpendTable(user.testData().spendings().toArray(SpendJson[]::new));
   }
@@ -97,10 +94,10 @@ public class SpendingTest {
               currency = CurrencyValues.RUB
           )
       })
+  @ApiLogin
   @ScreenShotTest(value = "img/expected-stat-edit.png")
   void checkStatComponentAfterEditingTest(UserJson user, BufferedImage expected) throws IOException {
-    Selenide.open(LoginPage.URL, LoginPage.class)
-        .doLogin(user.username(), user.testData().password())
+    Selenide.open(MainPage.URL, MainPage.class)
         .getSpendingTable()
         .editSpending(user.testData().spendings().getFirst().description())
         .editSpendingAmount("95")
@@ -116,10 +113,10 @@ public class SpendingTest {
           amount = 150.00,
           currency = CurrencyValues.RUB
       ))
+  @ApiLogin
   @ScreenShotTest(value = "img/expected-stat-delete.png")
   void checkStatComponentAfterDeletingTest(UserJson user, BufferedImage expected) throws IOException {
-    Selenide.open(LoginPage.URL, LoginPage.class)
-        .doLogin(user.username(), user.testData().password())
+    Selenide.open(MainPage.URL, MainPage.class)
         .getSpendingTable()
         .deleteSpending(user.testData().spendings().getFirst().description())
         .getStatComponent()
@@ -150,16 +147,17 @@ public class SpendingTest {
           )
       }
   )
+  @ApiLogin
   @ScreenShotTest(value = "img/expected-stat-archived.png")
   void checkStatComponentArchivedCategoriesTest(UserJson user, BufferedImage expected) throws IOException {
-    Selenide.open(LoginPage.URL, LoginPage.class)
-        .doLogin(user.username(), user.testData().password())
+    Selenide.open(MainPage.URL, MainPage.class)
         .getStatComponent()
         .checkStatisticBubblesContains("Одежда 5000 ₽", "Archived 3800 ₽")
         .checkStatisticImage(expected);
   }
 
   @User
+  @ApiLogin
   @Test
   void shouldAddNewSpending(UserJson user) {
     SpendJson newSpend = new SpendJson(
@@ -177,8 +175,7 @@ public class SpendingTest {
         user.username()
     );
 
-    Selenide.open(LoginPage.URL, LoginPage.class)
-        .doLogin(user.username(), user.testData().password())
+    Selenide.open(MainPage.URL, MainPage.class)
         .getHeader()
         .addSpendingPage()
         .addNewSpending(newSpend)
