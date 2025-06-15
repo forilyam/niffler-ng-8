@@ -30,7 +30,7 @@ public class CategoryExtension implements
     AnnotationSupport.findAnnotation(context.getRequiredTestMethod(), User.class)
         .ifPresent(userAnno -> {
           if (ArrayUtils.isNotEmpty(userAnno.categories())) {
-            UserJson createdUser = UserExtension.createdUser();
+            UserJson createdUser = UserExtension.getUserJson();
             final String username = createdUser != null
                 ? createdUser.username()
                 : userAnno.username();
