@@ -1,7 +1,7 @@
 package guru.qa.niffler.jupiter.extension;
 
 import guru.qa.niffler.jupiter.annotation.User;
-import guru.qa.niffler.model.UserJson;
+import guru.qa.niffler.model.rest.UserJson;
 import guru.qa.niffler.service.UsersClient;
 import guru.qa.niffler.utils.RandomDataUtils;
 import org.junit.jupiter.api.extension.*;
@@ -46,12 +46,12 @@ public class UserExtension implements
   }
 
   public static UserJson getUserJson() {
-    final ExtensionContext context = TestMethodContextExtension.context();
+    final ExtensionContext context = TestsMethodContextExtension.context();
     return context.getStore(NAMESPACE).get(context.getUniqueId(), UserJson.class);
   }
 
   public static void setUser(UserJson user) {
-    final ExtensionContext context = TestMethodContextExtension.context();
+    final ExtensionContext context = TestsMethodContextExtension.context();
     context.getStore(NAMESPACE)
         .put(context.getUniqueId(), user.withPassword(defaultPassword));
   }

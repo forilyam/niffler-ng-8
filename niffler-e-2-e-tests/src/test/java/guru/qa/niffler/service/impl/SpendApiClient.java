@@ -2,9 +2,9 @@ package guru.qa.niffler.service.impl;
 
 import guru.qa.niffler.api.SpendApi;
 import guru.qa.niffler.api.core.RestClient;
-import guru.qa.niffler.model.CategoryJson;
+import guru.qa.niffler.model.rest.CategoryJson;
 import guru.qa.niffler.model.CurrencyValues;
-import guru.qa.niffler.model.SpendJson;
+import guru.qa.niffler.model.rest.SpendJson;
 import guru.qa.niffler.service.SpendClient;
 import io.qameta.allure.Step;
 import retrofit2.Response;

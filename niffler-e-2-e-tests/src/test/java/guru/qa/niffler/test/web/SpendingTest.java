@@ -3,18 +3,21 @@ package guru.qa.niffler.test.web;
 import com.codeborne.selenide.Selenide;
 import guru.qa.niffler.condition.Color;
 import guru.qa.niffler.jupiter.annotation.*;
-import guru.qa.niffler.jupiter.extension.BrowserExtension;
-import guru.qa.niffler.model.*;
+import guru.qa.niffler.jupiter.annotation.meta.WebTest;
+import guru.qa.niffler.model.Bubble;
+import guru.qa.niffler.model.CurrencyValues;
+import guru.qa.niffler.model.rest.CategoryJson;
+import guru.qa.niffler.model.rest.SpendJson;
+import guru.qa.niffler.model.rest.UserJson;
 import guru.qa.niffler.page.MainPage;
 import guru.qa.niffler.utils.RandomDataUtils;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Date;
 
-@ExtendWith(BrowserExtension.class)
+@WebTest
 public class SpendingTest {
 
   @User(

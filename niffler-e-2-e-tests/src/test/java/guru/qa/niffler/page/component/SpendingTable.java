@@ -2,7 +2,7 @@ package guru.qa.niffler.page.component;
 
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
-import guru.qa.niffler.model.SpendJson;
+import guru.qa.niffler.model.rest.SpendJson;
 import guru.qa.niffler.page.EditSpendingPage;
 import guru.qa.niffler.page.MainPage;
 import io.qameta.allure.Step;

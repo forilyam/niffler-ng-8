@@ -1,17 +1,16 @@
 package guru.qa.niffler.test.web;
 
 import com.codeborne.selenide.Selenide;
-import guru.qa.niffler.jupiter.extension.BrowserExtension;
+import guru.qa.niffler.jupiter.annotation.meta.WebTest;
 import guru.qa.niffler.page.LoginPage;
 import guru.qa.niffler.page.RegisterPage;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 
 import static guru.qa.niffler.utils.RandomDataUtils.randomSentence;
 import static guru.qa.niffler.utils.RandomDataUtils.randomUsername;
 
-@ExtendWith(BrowserExtension.class)
-public class RegisterTest {
+@WebTest
+public class RegistrationTest {
 
   @Test
   void shouldRegisterNewUser() {
