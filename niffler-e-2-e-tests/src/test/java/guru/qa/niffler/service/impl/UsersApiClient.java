@@ -16,6 +16,8 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
+import static guru.qa.niffler.data.entity.userdata.FriendshipStatus.INVITE_RECEIVED;
+import static guru.qa.niffler.data.entity.userdata.FriendshipStatus.INVITE_SENT;
 import static guru.qa.niffler.utils.RandomDataUtils.randomUsername;
 import static java.util.Objects.requireNonNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -131,5 +133,53 @@ public class UsersApiClient implements UsersClient {
     }
     assertEquals(200, response.code());
     return response.body() != null ? response.body() : Collections.emptyList();
+  }
+
+  @Step("Get current user using API")
+  @Nonnull
+  public UserJson currentUser(@Nonnull String username) {
+    final Response<UserJson> response;
+    try {
+      response = userdataApi.currentUser(username)
+          .execute();
+    } catch (IOException e) {
+      throw new AssertionError(e);
+    }
+    assertEquals(200, response.code());
+    return response.body();
+  }
+
+  @Step("Get user's friends using API")
+  @Nonnull
+  public List<UserJson> getFriends(@Nonnull String username) {
+    final Response<List<UserJson>> response;
+    try {
+      response = userdataApi.friends(username, null)
+          .execute();
+    } catch (IOException e) {
+      throw new AssertionError(e);
+    }
+    assertEquals(200, response.code());
+    return response.body() != null ? response.body() : Collections.emptyList();
+  }
+
+  @Step("Get user's income invitations using API")
+  @Nonnull
+  public List<UserJson> getIncomeInvitations(@Nonnull String username) {
+    List<UserJson> friends = getFriends(username);
+
+    return friends.stream()
+        .filter(userJson -> userJson.friendshipStatus().equals(INVITE_RECEIVED))
+        .toList();
+  }
+
+  @Step("Get user's outcome invitations using API")
+  @Nonnull
+  public List<UserJson> getOutcomeInvitations(@Nonnull String username) {
+    List<UserJson> allPeople = allUsers(username, null);
+
+    return allPeople.stream()
+        .filter(userJson -> userJson.friendshipStatus().equals(INVITE_SENT))
+        .toList();
   }
 }
