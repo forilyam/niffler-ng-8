@@ -1,10 +1,10 @@
 package guru.qa.niffler.test.fake;
 
 import guru.qa.niffler.jupiter.extension.InjectClientExtension;
-import guru.qa.niffler.model.CategoryJson;
+import guru.qa.niffler.model.rest.CategoryJson;
 import guru.qa.niffler.model.CurrencyValues;
-import guru.qa.niffler.model.SpendJson;
-import guru.qa.niffler.model.UserJson;
+import guru.qa.niffler.model.rest.SpendJson;
+import guru.qa.niffler.model.rest.UserJson;
 import guru.qa.niffler.service.SpendClient;
 import guru.qa.niffler.service.UsersClient;
 import org.junit.jupiter.api.Test;

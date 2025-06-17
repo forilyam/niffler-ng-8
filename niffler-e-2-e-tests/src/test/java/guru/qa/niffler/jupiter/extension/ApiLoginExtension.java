@@ -8,7 +8,7 @@ import guru.qa.niffler.config.Config;
 import guru.qa.niffler.jupiter.annotation.ApiLogin;
 import guru.qa.niffler.jupiter.annotation.Token;
 import guru.qa.niffler.model.TestData;
-import guru.qa.niffler.model.UserJson;
+import guru.qa.niffler.model.rest.UserJson;
 import guru.qa.niffler.page.MainPage;
 import guru.qa.niffler.service.impl.AuthApiClient;
 import guru.qa.niffler.service.impl.SpendApiClient;
@@ -38,7 +38,7 @@ public class ApiLoginExtension implements BeforeEachCallback, ParameterResolver 
     this.setupBrowser = true;
   }
 
-  public static ApiLoginExtension restApiLoginExtension() {
+  public static ApiLoginExtension rest() {
     return new ApiLoginExtension(false);
   }
 
@@ -89,19 +89,19 @@ public class ApiLoginExtension implements BeforeEachCallback, ParameterResolver 
   }
 
   public static void setToken(String token) {
-    TestMethodContextExtension.context().getStore(NAMESPACE).put("token", token);
+    TestsMethodContextExtension.context().getStore(NAMESPACE).put("token", token);
   }
 
   public static String getToken() {
-    return TestMethodContextExtension.context().getStore(NAMESPACE).get("token", String.class);
+    return TestsMethodContextExtension.context().getStore(NAMESPACE).get("token", String.class);
   }
 
   public static void setCode(String code) {
-    TestMethodContextExtension.context().getStore(NAMESPACE).put("code", code);
+    TestsMethodContextExtension.context().getStore(NAMESPACE).put("code", code);
   }
 
   public static String getCode() {
-    return TestMethodContextExtension.context().getStore(NAMESPACE).get("code", String.class);
+    return TestsMethodContextExtension.context().getStore(NAMESPACE).get("code", String.class);
   }
 
   public static Cookie getJsessionIdCookie() {

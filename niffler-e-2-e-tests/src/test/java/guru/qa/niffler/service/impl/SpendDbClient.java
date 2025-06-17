@@ -4,10 +4,9 @@ import guru.qa.niffler.config.Config;
 import guru.qa.niffler.data.entity.spend.CategoryEntity;
 import guru.qa.niffler.data.entity.spend.SpendEntity;
 import guru.qa.niffler.data.repository.SpendRepository;
-import guru.qa.niffler.data.repository.impl.jdbc.SpendRepositoryJdbc;
 import guru.qa.niffler.data.tpl.XaTransactionTemplate;
-import guru.qa.niffler.model.CategoryJson;
-import guru.qa.niffler.model.SpendJson;
+import guru.qa.niffler.model.rest.CategoryJson;
+import guru.qa.niffler.model.rest.SpendJson;
 import guru.qa.niffler.service.SpendClient;
 import io.qameta.allure.Step;
 
@@ -23,7 +22,7 @@ public class SpendDbClient implements SpendClient {
 
   private static final Config CFG = Config.getInstance();
 
-  private final SpendRepository spendRepository = new SpendRepositoryJdbc();
+  private final SpendRepository spendRepository = SpendRepository.getInstance();
 
   private final XaTransactionTemplate xaTransactionTemplate = new XaTransactionTemplate(
       CFG.spendJdbcUrl()
