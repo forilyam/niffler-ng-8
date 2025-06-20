@@ -5,6 +5,7 @@ import guru.qa.niffler.api.UserdataApi;
 import guru.qa.niffler.api.core.RestClient.EmtyRestClient;
 import guru.qa.niffler.api.core.ThreadSafeCookieStore;
 import guru.qa.niffler.config.Config;
+import guru.qa.niffler.model.TestData;
 import guru.qa.niffler.model.rest.UserJson;
 import guru.qa.niffler.service.UsersClient;
 import io.qameta.allure.Step;
@@ -44,8 +45,10 @@ public class UsersApiClient implements UsersClient {
           ThreadSafeCookieStore.INSTANCE.cookieValue("XSRF-TOKEN")
       ).execute();
       UserJson createdUser = requireNonNull(userdataApi.currentUser(username).execute().body());
-      return createdUser.withPassword(
-          defaultPassword
+      return createdUser.withTestData(
+          new TestData(
+              password
+          )
       );
     } catch (IOException e) {
       throw new RuntimeException(e);
