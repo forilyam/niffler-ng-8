@@ -16,7 +16,7 @@ public interface SpendRepository {
 
   @Nonnull
   static SpendRepository getInstance() {
-    return switch (System.getProperty("repository.impl", "jpa")) {
+    return switch (System.getProperty("repository.impl", "jdbc")) {
       case "jpa" -> new SpendRepositoryHibernate();
       case "jdbc" -> new SpendRepositoryJdbc();
       case "sjdbc" -> new SpendRepositorySpringJdbc();
