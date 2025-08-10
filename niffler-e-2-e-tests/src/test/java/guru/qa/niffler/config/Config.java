@@ -28,12 +28,18 @@ public interface Config {
 
   String currencyJdbcUrl();
 
-  String ghUrl();
+  @Nonnull
+  String allureDockerServiceUrl();
 
   @Nonnull
   String currencyGrpcAddress();
 
   default int currencyGrpcPort() {
     return 8092;
+  }
+
+  @Nonnull
+  default String ghUrl() {
+    return "https://api.github.com/";
   }
 }
