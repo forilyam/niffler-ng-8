@@ -1,10 +1,10 @@
 buildscript {
     ext {
-        junitVersion = '5.11.4'
+        junitVersion = '5.13.4'
         allureVersion = '2.29.1'
-        selenideVersion = '7.7.1'
-        okhttp3Version = '4.12.0'
-        retrofitVersion = '2.11.0'
+        selenideVersion = '7.9.4'
+        okhttp3Version = '5.1.0'
+        retrofitVersion = '3.0.0'
         apollographqlVersion = '0.0.2'
         logbackVersion = '1.4.11'
         slf4jVersion = '2.0.9'
@@ -33,7 +33,7 @@ plugins {
     id 'io.qameta.allure' version '2.12.0'
     id 'io.qameta.allure-adapter' version '2.12.0'
     id 'com.github.edeandrea.xjc-generation' version '1.6'
-    id 'com.apollographql.apollo' version '4.1.1'
+    id 'com.apollographql.apollo' version '4.3.2'
 }
 
 group = 'guru.qa'

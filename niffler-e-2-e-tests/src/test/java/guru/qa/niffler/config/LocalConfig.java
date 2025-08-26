@@ -52,6 +52,12 @@ enum LocalConfig implements Config {
 
   @Nonnull
   @Override
+  public String screenshotBaseDir() {
+    return "screenshots/local/";
+  }
+
+  @Nonnull
+  @Override
   public String currencyGrpcAddress() {
     return "127.0.0.1";
   }

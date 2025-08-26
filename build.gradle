@@ -25,7 +25,7 @@ subprojects {
     ext {
         dockerHubName = "ilyamukhamedzhanov"
 
-        lombokVersion = '1.18.34'
+        lombokVersion = '1.18.38'
         springKafkaVersion = '3.3.2'
         springVaultVersion = '4.2.0'
         springOpenApiVersion = '2.8.3'
@@ -35,11 +35,11 @@ subprojects {
         springGraphqlDateTimeVersion = '6.0.0'
         jakartaJaxbVersion = '4.0.5'
         wsdl4jVersion = '1.6.3'
-        protobufVersion = '3.25.3'
-        grpcVersion = '1.63.0'
+        protobufVersion = '4.31.1'
+        grpcVersion = '1.74.0'
         thumbnailatorVersion = '0.4.20'
         h2Version = '2.3.232'
-        mockitoVersion = '5.12.0'
+        mockitoVersion = '5.18.0'
 
         dockerImage = System.getProperty("os.arch") == "aarch64" || System.getProperty("os.arch") == "arm64"
                 ? "arm64v8/eclipse-temurin:21-jdk"

@@ -53,6 +53,12 @@ enum DockerConfig implements Config {
 
   @Nonnull
   @Override
+  public String screenshotBaseDir() {
+    return "screenshots/selenoid/";
+  }
+
+  @Nonnull
+  @Override
   public String currencyGrpcAddress() {
     return "currency.niffler.dc";
   }

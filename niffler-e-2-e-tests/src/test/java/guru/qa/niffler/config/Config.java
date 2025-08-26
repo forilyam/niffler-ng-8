@@ -32,6 +32,9 @@ public interface Config {
   String allureDockerServiceUrl();
 
   @Nonnull
+  String screenshotBaseDir();
+
+  @Nonnull
   String currencyGrpcAddress();
 
   default int currencyGrpcPort() {

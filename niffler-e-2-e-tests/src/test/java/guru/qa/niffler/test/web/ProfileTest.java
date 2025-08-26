@@ -50,10 +50,10 @@ public class ProfileTest {
 
   @User
   @ApiLogin
-  @ScreenShotTest(value = "img/expected-avatar.png")
+  @ScreenShotTest(expected = "expected-avatar.png")
   void checkProfileImageTest(UserJson user, BufferedImage expectedProfileImage) throws IOException {
     Selenide.open(ProfilePage.URL, ProfilePage.class)
-        .uploadAvatarFromClasspath("img/avatar.png")
+        .uploadAvatarFromClasspath("avatar.png")
         .checkAvatarPicture(expectedProfileImage);
   }
 

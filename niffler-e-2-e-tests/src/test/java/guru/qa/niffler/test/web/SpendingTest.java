@@ -56,7 +56,7 @@ public class SpendingTest {
           )}
   )
   @ApiLogin
-  @ScreenShotTest(value = "img/expected-stat.png")
+  @ScreenShotTest(expected = "expected-stat.png")
   void checkStatComponentTest(UserJson user, BufferedImage expected) throws IOException {
     Selenide.open(MainPage.URL, MainPage.class)
         .getStatComponent()
@@ -98,7 +98,7 @@ public class SpendingTest {
           )
       })
   @ApiLogin
-  @ScreenShotTest(value = "img/expected-stat-edit.png")
+  @ScreenShotTest(expected = "expected-stat-edit.png")
   void checkStatComponentAfterEditingTest(UserJson user, BufferedImage expected) throws IOException {
     Selenide.open(MainPage.URL, MainPage.class)
         .getSpendingTable()
@@ -117,7 +117,7 @@ public class SpendingTest {
           currency = CurrencyValues.RUB
       ))
   @ApiLogin
-  @ScreenShotTest(value = "img/expected-stat-delete.png")
+  @ScreenShotTest(expected = "screenshots/local/expected-stat-delete.png")
   void checkStatComponentAfterDeletingTest(UserJson user, BufferedImage expected) throws IOException {
     Selenide.open(MainPage.URL, MainPage.class)
         .getSpendingTable()
@@ -151,7 +151,7 @@ public class SpendingTest {
       }
   )
   @ApiLogin
-  @ScreenShotTest(value = "img/expected-stat-archived.png")
+  @ScreenShotTest(expected = "screenshots/local/expected-stat-archived.png")
   void checkStatComponentArchivedCategoriesTest(UserJson user, BufferedImage expected) throws IOException {
     Selenide.open(MainPage.URL, MainPage.class)
         .getStatComponent()
