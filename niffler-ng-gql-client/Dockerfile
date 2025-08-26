@@ -5,7 +5,7 @@ COPY package.json ./
 RUN npm install
 COPY . ./
 RUN npm run ${NPM_COMMAND}
- 
+
 # release step
 FROM nginx:1.27.1-alpine AS release
 LABEL maintainer="Irina Stiazhkina @irin_alexis"

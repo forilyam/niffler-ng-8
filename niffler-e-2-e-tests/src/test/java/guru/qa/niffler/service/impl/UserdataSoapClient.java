@@ -8,8 +8,8 @@ import guru.qa.niffler.config.Config;
 import guru.qa.niffler.model.rest.UserJson;
 import io.qameta.allure.Step;
 import okhttp3.logging.HttpLoggingInterceptor;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.IOException;
 
@@ -26,7 +26,7 @@ public class UserdataSoapClient extends RestClient {
     this.userdataSoapApi = create(UserdataSoapApi.class);
   }
 
-  @NotNull
+  @Nonnull
   @Step("Get current user info using SOAP")
   public UserResponse currentUser(CurrentUserRequest request) throws IOException {
     return userdataSoapApi.currentUser(request).execute().body();
@@ -43,7 +43,7 @@ public class UserdataSoapClient extends RestClient {
     return requireNonNull(userdataSoapApi.friendsPage(request).execute().body());
   }
 
-  @NotNull
+  @Nonnull
   @Step("Get friends info for user filtering by username using SOAP")
   public UsersResponse allFriendsFilteringByUsername(UserJson userJson, String username) throws IOException {
     FriendsRequest request = new FriendsRequest();
@@ -76,7 +76,7 @@ public class UserdataSoapClient extends RestClient {
     userdataSoapApi.declineInvitation(request).execute();
   }
 
-  @NotNull
+  @Nonnull
   @Step("Send invitation using SOAP")
   public UserResponse sendInvitation(UserJson userJson, String friendToBeRequestedUsername) throws IOException {
     SendInvitationRequest request = new SendInvitationRequest();

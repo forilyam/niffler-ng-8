@@ -9,6 +9,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import org.apache.commons.lang3.StringUtils;
 
 @ParametersAreNonnullByDefault
 public class EntityManagers {
@@ -25,7 +26,8 @@ public class EntityManagers {
             jdbcUrl,
             key -> {
               DataSources.dataSource(jdbcUrl);
-              return Persistence.createEntityManagerFactory(jdbcUrl);
+                final String persistenceUnitName = StringUtils.substringAfter(jdbcUrl, "5432/");
+                return Persistence.createEntityManagerFactory(persistenceUnitName);
             }
         ).createEntityManager()
     );
